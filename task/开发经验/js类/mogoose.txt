@@ -1,0 +1,216 @@
+@参考文档：http://houzhiqingjava.blog.163.com/blog/static/167399507201311154854496/
+@Express中mongoose的使用方法：
+1，首先要在Express项目的根目录下新建一个models文件，改文件即MVC中的M，即实体对象文件。
+2，在models文件夹中新建实体对象，注意对象名称和mongodb中的表名称要保持一致。
+---例如，新建一个blog.js实体对象，那么mongodb中就会对应新建一个表blogs。
+---例如，新建一个user.js实体兑现，那么mongodb中就会对应新建一个表users。
+---model对象代码格式如下：
+var mongoose = require("mongoose");  //  顶会议用户组件
+var Schema = mongoose.Schema;    //  创建模型
+//上边为标准引用文件。
+
+var blogSchema = new Schema({   //新建实体对象
+  //对象中的属性名，这里有多个属性，并且包含嵌套对象，即一个属性指向一个对象。
+  title:  String,  
+  author: String,
+  body:   String,
+  comments: [{ body: String, date: Date }],
+  date: { type: Date, default: Date.now },
+  hidden: Boolean,
+  meta: {
+    votes: Number,
+    favs:  Number
+  }
+});
+
+/*定义了一个新的模型Blog，但是此模式还未和users集合有关联。建议第一个字母大写。
+就像一个类。
+    这里的Blog名字可以随意命名，它的作用仅限于是一个输出的对象，在路由文件中引用
+并使用。
+*/
+exports.Blog = mongoose.model('Blog', blogSchema);  
+//此处Blog会自动对应数据库中的blogs表
+
+
+3，在指定的路由文件中，引用mongoose和实体对象：
+var mongoose = require('mongoose');
+var blogs = require('../models/blog').Blog;  
+//这里名称blogs必须要和数据库中的表名称一致，因为查询的时候必须一样，才能找到对应表
+
+//并连接指定mongodb数据库。
+mongoose.connect('mongodb://localhost/hello-world'); 
+
+//下边就可以操作数据了。
+
+4，增删改查
+（1）,查
+router.get('/blog-list.html',function(reg, res) {
+    //查询所有数据，保存到docs中，在页面循环输出
+    blogs.find(function(err,docs){    
+        console.log(docs);  //测试，输出查询获得的对象，其实就是一个json文档。
+        res.render('blog-ejs',{title:'Express Demo Example',blog_list:docs}); 
+        //这里blog-ejs是返回的页面文件名称。
+        //这里blog_list对象，是个集合对象，供页面调用。
+    });
+})
+（2），增
+//路由文件中处理post请求，add.htm页面post提交的对应处理。
+router.post('/add.htm',function(req,res){
+    var demo=new blogs({ //这里blogs对象，即上边引入的实体model对象。
+    //demo可以随意命名，只要new 对象名称和上边保持一致就行了。
+        title:req.body.title,
+        author:req.body.author
+        //title和author是页面提交的请求参数
+    });
+    console.log('creat----');
+    demo.save(function(err,doc){
+        console.log(doc);
+        res.redirect('/');    
+    });
+})
+//道理同上，只不过一个是跳转页面，一个是返回页面
+router.get('/bootstrap.html', function(req, res, next) {
+  var blog=new blogs({
+      title:'小时代4',
+      author:'郭敬明',
+      body:'the body of my blog. can you see that?'
+  });
+  blog.save();
+  res.render('bootstrap', { title: 'bootstrap' });
+});
+（3），删
+router.get('/del.html', function(req, res, next) {
+  var id=req.query.id;  //获取url后的?id的值。get提交，就用query获取参数
+  console.log('id='+id);
+  if(id&&''!=id){  
+      member_integrals.findByIdAndRemove(id,function(err,docs){  //删除执行函数
+           console.log('delete-----'+docs);
+           res.render('index', { title: 'Express Demo Example' });
+      });
+  }
+});
+（4），改（待测试）
+exports.modify = function(req, res) {    
+    var demo = {
+        uid : req.body.uid,
+        title: req.body.title,
+        content : req.body.content
+    };
+    var id = req.body.id; //因为是post提交，所以不用query获取id
+    if(id && '' != id) {
+        console.log('----update id = ' + id + "," + demo);
+        Demo.findByIdAndUpdate(id, demo,function(err, docs) {
+            console.log('update-----'+ docs);
+            res.redirect('/');
+        });
+    }
+};
+
+
+@参考文档：http://houzhiqingjava.blog.163.com/blog/static/167399507201311154854496/
+@Express中mongoose的使用方法：
+1，首先要在Express项目的根目录下新建一个models文件，改文件即MVC中的M，即实体对象文件。
+2，在models文件夹中新建实体对象，注意对象名称和mongodb中的表名称要保持一致。
+---例如，新建一个blog.js实体对象，那么mongodb中就会对应新建一个表blogs。
+---例如，新建一个user.js实体兑现，那么mongodb中就会对应新建一个表users。
+---model对象代码格式如下：
+var mongoose = require("mongoose");  //  顶会议用户组件
+var Schema = mongoose.Schema;    //  创建模型
+//上边为标准引用文件。
+
+var blogSchema = new Schema({   //新建实体对象
+  //对象中的属性名，这里有多个属性，并且包含嵌套对象，即一个属性指向一个对象。
+  title:  String,  
+  author: String,
+  body:   String,
+  comments: [{ body: String, date: Date }],
+  date: { type: Date, default: Date.now },
+  hidden: Boolean,
+  meta: {
+    votes: Number,
+    favs:  Number
+  }
+});
+
+/*定义了一个新的模型Blog，但是此模式还未和users集合有关联。建议第一个字母大写。
+就像一个类。
+    这里的Blog名字可以随意命名，它的作用仅限于是一个输出的对象，在路由文件中引用
+并使用。
+*/
+exports.Blog = mongoose.model('Blog', blogSchema);  
+//此处Blog会自动对应数据库中的blogs表
+
+
+3，在指定的路由文件中，引用mongoose和实体对象：
+var mongoose = require('mongoose');
+var blogs = require('../models/blog').Blog;  
+//这里名称blogs必须要和数据库中的表名称一致，因为查询的时候必须一样，才能找到对应表
+
+//并连接指定mongodb数据库。
+mongoose.connect('mongodb://localhost/hello-world'); 
+
+//下边就可以操作数据了。
+
+4，增删改查
+（1）,查
+router.get('/blog-list.html',function(reg, res) {
+    //查询所有数据，保存到docs中，在页面循环输出
+    blogs.find(function(err,docs){    
+        console.log(docs);  //测试，输出查询获得的对象，其实就是一个json文档。
+        res.render('blog-ejs',{title:'Express Demo Example',blog_list:docs}); 
+        //这里blog-ejs是返回的页面文件名称。
+        //这里blog_list对象，是个集合对象，供页面调用。
+    });
+})
+（2），增
+//路由文件中处理post请求，add.htm页面post提交的对应处理。
+router.post('/add.htm',function(req,res){
+    var demo=new blogs({ //这里blogs对象，即上边引入的实体model对象。
+    //demo可以随意命名，只要new 对象名称和上边保持一致就行了。
+        title:req.body.title,
+        author:req.body.author
+        //title和author是页面提交的请求参数
+    });
+    console.log('creat----');
+    demo.save(function(err,doc){
+        console.log(doc);
+        res.redirect('/');    
+    });
+})
+//道理同上，只不过一个是跳转页面，一个是返回页面
+router.get('/bootstrap.html', function(req, res, next) {
+  var blog=new blogs({
+      title:'小时代4',
+      author:'郭敬明',
+      body:'the body of my blog. can you see that?'
+  });
+  blog.save();
+  res.render('bootstrap', { title: 'bootstrap' });
+});
+（3），删
+router.get('/del.html', function(req, res, next) {
+  var id=req.query.id;  //获取url后的?id的值。get提交，就用query获取参数
+  console.log('id='+id);
+  if(id&&''!=id){  
+      member_integrals.findByIdAndRemove(id,function(err,docs){  //删除执行函数
+           console.log('delete-----'+docs);
+           res.render('index', { title: 'Express Demo Example' });
+      });
+  }
+});
+（4），改（待测试）
+exports.modify = function(req, res) {    
+    var demo = {
+        uid : req.body.uid,
+        title: req.body.title,
+        content : req.body.content
+    };
+    var id = req.body.id; //因为是post提交，所以不用query获取id
+    if(id && '' != id) {
+        console.log('----update id = ' + id + "," + demo);
+        Demo.findByIdAndUpdate(id, demo,function(err, docs) {
+            console.log('update-----'+ docs);
+            res.redirect('/');
+        });
+    }
+};

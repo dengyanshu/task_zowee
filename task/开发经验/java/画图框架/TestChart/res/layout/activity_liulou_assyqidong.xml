@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightskyblue"
+    android:orientation="vertical"
+    android:padding="2dp"
+    tools:context=".activity.CheckMoNamesActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="70dp"
+            
+           
+            android:src="@drawable/app" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|center_vertical|center_horizontal"
+            android:text="条码启动"
+            android:textColor="@color/black"
+            android:textColorLink="@color/black"
+            android:textSize="60sp"
+            android:textStyle="normal|bold|italic" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="495dp"
+            android:layout_height="537dp"
+            android:orientation="vertical"
+            android:layout_marginTop="50dp"
+             >
+
+            <Spinner
+                android:id="@+id/assyqidong_mospinner"
+                android:layout_width="match_parent"
+                android:layout_height="70dp" 
+                android:layout_marginBottom="15dp"/>
+           
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                
+                >
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:text="工单:"
+                    android:textColor="@color/red" />
+
+                <EditText
+                    android:id="@+id/assyqidong_moedit"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:singleLine="true"
+                    android:textSize="15sp"
+                    android:textStyle="bold" >
+</EditText>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="产品描述:"
+                    android:textColor="@color/red" 
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="5dp"/>
+
+                <EditText
+                    android:id="@+id/assyqidong_modescri"
+                    android:layout_width="181dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="15dp"
+                    android:enabled="false"
+                    android:focusable="false"
+                    android:singleLine="true"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                   <TextView
+                       android:layout_width="40dp"
+                       android:layout_height="40dp"
+                       android:text="料号:"
+                       android:textColor="@color/red" />
+
+                <EditText
+                    android:id="@+id/assyqidong_moproduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:enabled="false"
+                    android:singleLine="true"
+                    android:textSize="10sp"
+                    android:focusable="false"
+                    android:textStyle="bold" />
+                
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+               >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="40dp"
+                    android:text="SN起始"
+                    android:textColor="@color/red" 
+                    android:layout_marginRight="5dp"/>
+
+                <EditText
+                    android:id="@+id/assyqidong_snstartedit"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:singleLine="true"
+                    android:selectAllOnFocus="true"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+                </LinearLayout>
+                <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+               >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="40dp"
+                    android:text="SN结束"
+                    android:textColor="@color/red" 
+                    android:layout_marginRight="5dp"/>
+
+                <EditText
+                    android:id="@+id/assyqidong_snendedit"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:singleLine="true"
+                    android:selectAllOnFocus="true"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+                </LinearLayout>
+           <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+               >
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="40dp"
+                    android:text="SN"
+                    android:textColor="@color/red" 
+                    android:layout_marginRight="5dp"/>
+
+                <EditText
+                    android:id="@+id/assyqidong_snedit"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:singleLine="true"
+                    android:selectAllOnFocus="true"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+                </LinearLayout>
+               <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/antiquewhite" >
+                </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" 
+                android:layout_marginTop="20dp">
+                <Button
+                    android:id="@+id/assyqidong_button"
+                    android:layout_width="0dp"
+                    android:layout_height="75dp"
+                     android:textColor="@color/green"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_weight="1"
+                    android:focusable="false"
+                    android:text="ASSY启动" >
+                </Button>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" 
+            android:layout_marginLeft="20dp">
+
+            <EditText
+                android:id="@+id/assyqidong_editscan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_weight="1.31"
+                android:ems="10"
+                android:enabled="false"
+                android:gravity="top"
+                android:textSize="15sp" >
+
+                <requestFocus />
+            </EditText>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

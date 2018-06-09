@@ -1,0 +1,2 @@
+list<String>  resdateset解析成 list<Hashmap<String,String>>  
+resdateset=[I_ReturnValue=1; I_ReturnMessage=OK; ,]逗号隔开才是第2个String

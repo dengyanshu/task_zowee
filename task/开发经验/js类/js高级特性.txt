@@ -1,0 +1,54 @@
+1、函数即对象 通过new Person()就是对象 括号可以省略
+  Person()就是函数
+
+
+2、函数或者叫对象原型prototype 是对象继承实现的重要功能
+   每个函数或者对象都维护了prototype对象
+
+
+3、 function Person(name,age){
+       var dd=0;  //var加了表示是局部变量
+       this.name=name;
+       this.age=age;
+       this.me=function(){
+        }
+        dd_add1=function(){
+            dd++;
+        }
+       //函数内部函数 相当于闭包 私有
+    }
+    //该say（）就相当于静态方法
+    Person.say=function(){
+    }
+    //通过原型扩展的方法 必须对象实例化才能访问
+    Person.prototype.hi=function(){
+      alert(this.name);
+    }
+
+
+
+
+4、常用函数
+   Number() 全局函数 与new Number()是有区别的
+
+
+5、
+   <script type="text/javascript">
+              /**
+                1、立即执行函数   相当于代码块防止代码污染、用于插件设计几乎主流的开源插件都这样写
+                2、闭包 speed 外部无法访问  通过内部的函数实现类似java的私有化封装
+              */
+               var car=(function(){
+                       var speed=50;
+                       return {
+                            setSpeed:function(speed){
+                                  this.speed=speed;
+                            },
+                            getSpeed:function(){
+                               return speed;
+                            }
+                       }
+                   })();
+          
+             alert(car.getSpeed());
+      </script>

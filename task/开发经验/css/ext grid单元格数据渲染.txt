@@ -1,0 +1,9 @@
+renderer:function(value, cellMeta, record, rowIndex, columnIndex, store)  
+{  
+      //  得到创建者信息  
+      var creator = record.data['card_admin'];  
+      //  是否显示密码(boolean)  
+      var isShowPassword = 自己的逻辑判断(creator);  
+   
+      return "<span style='color:#000000;'>"+isShowPassword ? value : ''+"</span>"}  
+}   

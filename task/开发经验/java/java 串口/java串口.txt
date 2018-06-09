@@ -1,0 +1,149 @@
+装备上网 15:57:38
+   登录 | 注册  收藏成功 确定收藏失败，请重新收藏 确定  标题   标题不能为空  网址    标签    摘要    公开 取消收藏  
+
+  分享资讯  传PPT/文档  提问题  写博客  传资源  创建项目  创建代码片  
+   设置昵称编辑自我介绍，让更多人了解你  设置退出  
+ 社区博客论坛下载Share极客头条服务CODE英雄会会议俱乐部高校俱乐部  Seven的专栏君子之行，静以修身，俭以养德。非淡泊无以明志，非宁静无以致远。目录视图摘要视图订阅.云计算大会抢票倒计时      高校俱乐部“我是Coding之星”      CSDN博客今日清理缓存 
+java串口通信 .
+分类： Java基础 2009-03-17 16:19 4625人阅读 评论(4) 收藏 举报 
+javastringimportpropertiesapibufferjava串口通信API说明 java串口通信
+2008/09/22 20:24
+java串口通信API说明
+java串口通信 
+
+　   Java提供了 CommunicationAPI(包含于javax.comm包中)用于通过与机器无关的方式，控制各种外部设备。Communications API，是标准的Java的扩展部分，它在JavaAPI中是没有附带的。因此，必须先在SUN公司网站的Java站点(www.java.sun.com)上下载这个扩展类库。 
+
+　　1.1Communications API 简介 
+
+Communications API 的核心是抽象的CommPort类及其两个子类：SerialPort类和ParallePort类。其中，SerialPort类是用于串口通信的类，ParallePort类是用于并行口通信的类。CommPort类还提供了常规的通信模式和方法，例如:getInputStream( )方法和getOutputStream( )方法，专用于与端口上的设备进行通信。 
+
+　　然而，这些类的构造方法都被有意的设置为非公有的(non-public)。所以，不能直接构造对象，而是先通过静态的CommPortIdentifer.getPortIdentifiers()获得端口列表；再从这个端口列表中选择所需要的端口，并调用CommPortIdentifer对象的Open( )方法，这样，就能得到一个CommPort对象。当然，还要将这个CommPort对象的类型转换为某个非抽象的子类，表明是特定的通讯设备。该子类可以是SerialPort类和ParallePort类中的一个。下面将分别对CommPort类，CommPortIdentifier类，串口类SerialPort进行详细的介绍。 
+
+　　1.2 CommPortIdentifier类 
+
+　　CommPortIdentifier类的方法如下： 
+
+方法 说明 
+addPortName(String, int, CommDriver) 添加端口名到端口列表里 
+addPortOwnershipListener(CommPortOwnershipListener) 添加端口拥有的监听器 
+removePortOwnershipListener(CommPortOwnershipListener) 移除端口拥有的监听器 
+getCurrentOwner() 得到当前占有端口的对象或应用程序 
+getName() 得到端口名称 
+getPortIdentifier(CommPort) 得到参数打开的端口的CommPortIdentifier类型对象 
+getPortIdentifier(String) 得到以参数命名的端口的CommPortIdentifier类型对象 
+getPortIdentifiers() 得到系统中的端口列表 
+getPortType() 得到端口的类型 
+isCurrentlyOwned() 判断当前端口是否被占用 
+open(FileDescriptor) 用文件描述的类型打开端口 
+open(String, int) 打开端口,两个参数：程序名称,延迟时间(毫秒数) 
+
+　　1.3 SerialPort类 
+
+SerialPort关于串口参数的静态成员变量 
+成员变量 说明 成员变量 说明 成员变量 说明 
+DATABITS_5 数据位为5 STOPBITS_2 停止位为2 PARITY_ODD 奇检验 
+DATABITS_6 数据位为6 STOPBITS_1 停止位为1 PARITY_MARK 标记检验 
+DATABITS_7 数据位为7 STOPBITS_1_5 停止为1.5 PARITY_NONE 空格检验 
+DATABITS_8 数据位为8 PARITY_EVEN 偶检验 PARITY_SPACE 无检验 
+SerialPort对象的关于串口参数的函数 
+方法 说明 方法 说明 
+getBaudRate() 得到波特率 getParity() 得到检验类型 
+getDataBits() 得到数据位数 getStopBits() 得到停止位数 
+setSerialPortParams(int, int, int, int) 设置串口参数依次为(波特率,数据位,停止位,奇偶检验) 
+SerialPort关于事件的静态成员变量 
+成员变量 说明 成员变量 说明 
+BI Break interrupt中断 FE Framing error错误 
+CD Carrier detect载波侦听 OE Overrun error错误 
+CTS Clear to send清除以传送 PE Parity error奇偶检验错误 
+DSR Data set ready数据备妥 RI Ring indicator响铃侦测 
+DATA_AVAILABLE 串口中的可用数据 OUTPUT_BUFFER_EMPTY 输出缓冲区空 
+SerialPort中关于事件的方法 
+方法 说明 方法 说明 方法 说明 
+isCD() 是否有载波 isCTS() 是否清除以传送 isDSR() 数据是否备妥 
+isDTR() 是否数据端备妥 isRI() 是否响铃侦测 isRTS()   是否要求传送 
+addEventListener(SerialPortEventListener)    向SerialPort对象中添加串口事件监听器 
+removeEventListener() 移除SerialPort对象中的串口事件监听器 
+notifyOnBreakInterrupt(boolean) 设置中断事件true有效,false无效 
+notifyOnCarrierDetect(boolean) 设置载波监听事件true有效,false无效 
+notifyOnCTS(boolean) 设置清除发送事件true有效,false无效 
+notifyOnDataAvailable(boolean) 设置串口有数据的事件true有效,false无效 
+notifyOnDSR(boolean) 设置数据备妥事件true有效,false无效 
+notifyOnFramingError(boolean) 设置发生错误事件true有效,false无效 
+notifyOnOutputEmpty(boolean) 设置发送缓冲区为空事件true有效,false无效 
+notifyOnParityError(boolean) 设置发生奇偶检验错误事件true有效,false无效 
+notifyOnRingIndicator(boolean) 设置响铃侦测事件true有效,false无效 
+getEventType() 得到发生的事件类型返回值为int型 
+sendBreak(int) 设置中断过程的时间，参数为毫秒值 
+setRTS(boolean) 设置或清除RTS位 
+setDTR(boolean) 设置或清除DTR位 
+SerialPort中的其他常用方法 
+方法 说明 
+close() 关闭串口 
+getOutputStream() 得到OutputStream类型的输出流 
+getInputStream() 得到InputStream类型的输入流  
+
+ 
+
+ 
+
+四：实例
+
+ 
+
+一：下载 
+    需要到其官方主页http://java.sun.com/products/javacomm/下载这个API，目前的最新版本是3.0。不过可惜的是，Sun目前没有推出此API在Windows平台下的3.0版本，主页上列出的三个版本，分别是运行在x86和Sparc结构下的Solaris系统，以及x86下的Linux系统。要下载Windows版本只能去寻找较老的版本了。我所找到的2个网址是http://llk.media.mit.edu/projects/cricket/software/javaSerial.zip（两个文件夹里面有所需的3个文件），http://mdubuc.freeshell.org/Jolt/javacomm20-win32.zip和（完整的2.0版本，还有examples）。 
+二：安装 
+    这里的所谓安装就是把三个重要的文件放到指定的目录下。 
+    将下载的文件解压缩后，在/javacomm20-win32/commapi目录下有必需的三个文件comm.jar，javax.comm. properties和win32comm.dll。将文件comm.jar拷贝到%JAVA_HOME%/jre/lib/ext;文件javax.comm. properties拷贝到%JAVA_HOME%/jre/lib; 文件win32comm.dll拷贝到%JAVA_HOME%/bin。注意%JAVA_HOME%是jdk的路径，而非jre。 
+
+ 
+
+
+首先看最简单的读、写程序。 
+读串口的例程
+
+import java.io.*;
+import java.util.*;
+import javax.comm.*;
+
+public class SimpleRead implements Runnable, SerialPortEventListener {
+    static CommPortIdentifier portId;
+    //枚举类
+    static Enumeration portList;
+
+    InputStream inputStream;
+    SerialPort serialPort;
+    Thread readThread;
+
+    public static void main(String[] args) {
+        portList = CommPortIdentifier.getPortIdentifiers();
+/*不带参数的getPortIdentifiers方法获得一个枚举对象，该对象又包含了系统中管理每个端口的CommPortIdentifier对象。
+注意这里的端口不仅仅是指串口，也包括并口。这个方法还可以带参数。getPortIdentifiers(CommPort)获得与已经被应 
+用程序打开的端口相对应的CommPortIdentifier对象。getPortIdentifier(String portName)获取指定端口名（比如“COM1”）
+的CommPortIdentifier对象。*/ 
+        while (portList.hasMoreElements()) {
+            portId = (CommPortIdentifier) portList.nextElement();
+            /*getPortType方法返回端口类型*/ 
+            if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+            /* 找Windows下的第一个串口*/
+                if (portId.getName().equals("COM1")) {
+            /*找Unix-like系统下的第一个串口*/
+                //if (portId.getName().equals("/dev/term/a")) {
+                    SimpleRead reader = new SimpleRead();
+                }
+            }
+        }
+    }
+
+    public SimpleRead() {
+        try {
+/* open方法打开通讯端口，获得一个CommPort对象。它使程序独占端口。如果端口正被其他应用程序占用，将使用 
+CommPortOwnershipListener事件机制，传递一个PORT_OWNERSHIP_REQUESTED事件。每个端口都关联一个 
+InputStream和一个OutputStream。如果端口是用open方法打开的，那么任何的getInputStream都将返回 
+相同的数据流对象，除非有close被调用。有两个参数，第一个为应用程序名；第二个参数是在端口打开 
+时阻塞等待的毫秒数。 */ 
+            serialPort = (SerialPort) portId.open("SimpleReadApp", 2000);
+        } catch (PortInUseException e) {}
+        try {
+            /*获取端口的输入流对象*/ 
+            inputStream = s

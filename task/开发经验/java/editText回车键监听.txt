@@ -1,0 +1,105 @@
+tCNPCode.setOnKeyListener(new OnKeyListener() { //监听tCNPCode这个EditText的按键处理
+public boolean onKey(View v, int keyCode, KeyEvent event) { 
+if(keyCode == 66) { //如果用户点击了回车键
+txtCNPCode.requestFocus(); //将焦点转移到txtCNPCode这个EditText
+} 
+return false;
+} 
+});
+
+其实就是个判断回车后请求焦点的办法。tCNPCode和txtCNPCode都是EditText，
+
+
+
+
+
+
+
+
+
+
+
+对于非内置输入法
+
+
+
+Java代码  
+1.password = (EditText) findViewById(R.id.login_password_edit);   
+2.        password.setOnKeyListener(new OnKeyListener() {   
+3.  
+4.            @Override  
+5.            public boolean onKey(View v, int keyCode, KeyEvent event) {   
+6.                if (KeyEvent.KEYCODE_ENTER == keyCode && event.getAction() == KeyEvent.ACTION_DOWN) {   
+7.                    login();   
+8.                    return true;   
+9.                }   
+10.                return false;   
+11.  
+12.            }   
+13.        });  
+password = (EditText) findViewById(R.id.login_password_edit);
+		password.setOnKeyListener(new OnKeyListener() {
+
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if (KeyEvent.KEYCODE_ENTER == keyCode && event.getAction() == KeyEvent.ACTION_DOWN) {
+					login();
+					return true;
+				}
+				return false;
+
+			}
+		});
+
+
+内置输入法 
+
+Xml代码  
+1.<EditText  
+2.           android:id="@+id/login_password_edit"  
+3.           android:layout_width="wrap_content"  
+4.ndroid:imeOptions="actionSend" />  
+ <EditText
+            android:id="@+id/login_password_edit"
+            android:layout_width="wrap_content"
+android:imeOptions="actionSend" />
+
+或者 
+
+Java代码  
+1.editText.setImeOptions(EditorInfo.IME_ACTION_DONE);  
+editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+会根据imeOptions值得不同，默认输入法的回车键会有不同的图案和功能。 
+https://developer.android.com/reference/android/view/inputmethod/EditorInfo.html 
+
+代码里监听 
+
+Java代码  
+1.password.setOnEditorActionListener(new TextView.OnEditorActionListener() {   
+2.  
+3.            @Override  
+4.            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {   
+5.                if (actionId == EditorInfo.IME_ACTION_NEXT) {   
+6.                    System.out.println("下一步");   
+7.                                        return true;   
+8.                }   
+9.                return false;   
+10.            }   
+11.        });   
+
+password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_NEXT) {
+					System.out.println("下一步");
+                                        return true;
+				}
+				return false;
+			}
+		});
+
+
+
+

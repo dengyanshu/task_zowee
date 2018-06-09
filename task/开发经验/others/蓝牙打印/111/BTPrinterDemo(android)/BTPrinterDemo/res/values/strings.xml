@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BTPrinter Demo</string>
+    <string name="app_title">BTPrinter Demo</string>
+
+    <!--BTPrinterDemo-->
+    <string name="send">Send</string>
+    <string name="Print">Print</string>
+    <string name="Clear">Clear</string>
+    <string name="not_connected">Please Connect BT Printer. (Menu->Connect)</string>
+    <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Printer Demo.</string>
+    <string name="title_connecting">connecting...</string>
+    <string name="title_connected_to">connected: </string>
+    <string name="title_not_connected">not connected</string>
+    <string name="default_font_gray_scale">4</string>
+    <string name="fontGrayscaleName">font gray scale</string>
+    <string name="fontGrayScaleRange">(1~8)</string>
+    <string name="PrintContent">
+^XA
+^MNY
+^JUS
+^MMT
+^LS0
+^CI28
+^FT55,40^A@N,43,43,stxinwei.TTF^FH\^FD21026690^FS
+^FT55,65^A@N,23,23,stxinwei.TTF^FH\^FD发往北京的物流箱^FS
+^FT55,100^A@N,23,23,stxinwei.TTF^FH\^FD2902088708516^FS
+^FT260,100^A@N,23,23,stxinwei.TTF^FH\^FD29箱^FS
+^FT360,100^A@N,23,23,stxinwei.TTF^FH\^FD1.8kg×6^FS
+^FT55,130^A@N,23,23,stxinwei.TTF^FH\^FD生成日期^FS
+^FT150,130^A@N,23,23,stxinwei.TTF^FH\^FD2013-06-03^FS
+^FT55,160^A@N,23,23,stxinwei.TTF^FH\^FD到期日期^FS
+^FT150,160^A@N,23,23,stxinwei.TTF^FH\^FD2016-05-18^FS
+^BY2,2,50^FT285,160^BCN,,N,N^FD>;01000000067165^FS
+^FT300,180^A@N,23,23,stxinwei.TTF^FH\^FD01000000067165^FS
+^PQ1,0,1,Y
+^XZ
+</string>
+
+    <!--  DeviceListActivity -->
+    <string name="scanning">scanning for devices...</string>
+    <string name="select_device">select a device to connect</string>
+    <string name="none_paired">No devices have been paired</string>
+    <string name="none_found">No devices found</string>
+    <string name="title_paired_devices">Paired Devices</string>
+    <string name="title_other_devices">Other Available Devices</string>
+    <string name="button_scan">Scan for devices</string>
+
+    <!-- Options Menu -->
+    <string name="connect">Connect BT Printer</string>
+    <string name="disconnect">Disconnect BT Printer</string>
+</resources>

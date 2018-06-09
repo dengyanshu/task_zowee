@@ -1,0 +1,365 @@
+   1、BluetoothAdapter STATE 状态值,即开关状态
+              int STATE_OFF              蓝牙已经关闭
+              int STATE_ON               蓝牙已经打开12
+              int STATE_TURNING_OFF      蓝牙处于关闭过程中 ，关闭ing
+              int STATE_TURNING_ON       蓝牙处于打开过程中 ，打开ing
+ 
+
+    2、BluetoothAdapter  SCAN_MOD状态值 ，即扫描状态
+         首先说明，可以扫描其他设备的，当然它同时能被其他蓝牙设备扫码。
+         int  SCAN_MODE_CONNECTABLE         表明该蓝牙可以扫描其他蓝牙设备21
+         int  SCAN_MODE_CONNECTABLE_DISCOVERABLE    表明该蓝牙设备同时可以扫码其他蓝牙设备，并且可以被其他蓝牙设备扫描到。
+         int  SCAN_MODE_NONE ： 该蓝牙不能扫描以及被扫描。
+ 
+    3、获得蓝牙适配器实例
+         public static synchronized BluetoothAdapter getDefaultAdapter ()
+           功能：获得本设备的蓝牙适配器实例。
+           返回值：如果设备具备蓝牙功能，返回BluetoothAdapter 实例；否则，返回null对象。
+
+    4、打开/关闭蓝牙的两种方法：
+          4.1、打开蓝牙：
+            ①、直接调用函数enable()去打开蓝牙设备 ；
+            ②、系统API去打开蓝牙设备，该方式会弹出一个对话框样式的Activity供用户选择是否打开蓝牙设备。
+                    注意：如果蓝牙已经开启，不会弹出该Activity界面。
+        PS：在目前Android手机中，是不支持在飞行模式下开启蓝牙的。如果蓝牙已经开启，那么蓝牙的开关状态会随着飞行模式的状态而发生改变。
+        代码示例分别如下：
+ 
+01.//第一种打开方法： 调用enable 即可   
+02.boolean result = mBluetoothAdapter.enable();  
+03.  
+04.//   
+05./第二种打开方法 ，调用系统API去打开蓝牙  
+06.if (!mBluetoothAdapter.isEnabled()) //未打开蓝牙，才需要打开蓝牙   
+07.{  
+08.Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);  
+09.startActivityForResult(intent, REQUEST_OPEN_BT_CODE);  
+10.//会以Dialog样式显示一个Activity ， 我们可以在onActivityResult()方法去处理返回值   
+11.}  
+//第一种打开方法： 调用enable 即可
+boolean result = mBluetoothAdapter.enable();
+
+
+        4.2、关闭蓝牙
+           直接调用API 函数即disable()即可。
+             public  boolean disable ()
+               功能：关闭蓝牙设备。
+               返回值：该函数会立即返回。
+                            true    表示关闭操作成功
+                           false   表示蓝牙操作失败 ， ①、当前蓝牙已经关闭 ；  ②、其他一些异常情况
+
+    5、扫描蓝牙设备
+      public boolean startDiscovery () 
+          功能： 扫描蓝牙设备
+          注意： 如果蓝牙没有开启，该方法会返回false ，即不会开始扫描过程。
+
+      public  boolean cancelDiscovery ()
+         功能： 取消扫描过程。
+         注意： 如果蓝牙没有开启，该方法会返回false。
+     public boolean isDiscovering ()
+        功能： 是否正在处于扫描过程中。
+        注意： 如果蓝牙没有开启，该方法会返回false。
+    6、 获取蓝牙相关信息
+     public String getName ()
+       功能：获取蓝牙设备Name
+    public String getAddress ()
+       功能：获取蓝牙设备的硬件地址(MAC地址)，例如：00:11:22:AA:BB:CC  
+   public boolean setName (String name)
+     功能：设置蓝牙设备的Name，
+   public Set<BluetoothDevice> getBondedDevices ()
+     功能：获取与本机蓝牙所有绑定的远程蓝牙信息，以BluetoothDevice类实例(稍后讲到)返回。
+     注意：如果蓝牙为开启，该函数会返回一个空集合 。
+
+  public static boolean checkBluetoothAddress (String address)
+     功能：　验证蓝牙设备MAC地址是否有效。所有设备地址的英文字母必须大写，48位，形如：00:43:A8:23:10:F1 。
+     返回值： true 设备地址有效
+                   false 设备地址无效
+
+
+
+
+ public BluetoothDevice getRemoteDevice (String address)
+
+      功能：以给定的MAC地址去创建一个 BluetoothDevice 类实例(代表远程蓝牙实例)。即使该蓝牙地址不可见，也会产生
+
+          一个BluetoothDevice 类实例。
+
+      返回：BluetoothDevice 类实例 。注意，如果该蓝牙设备MAC地址不能被识别，其蓝牙Name为null。
+
+          异常：如果MAC  address无效，抛出IllegalArgumentException。
+
+ 
+
+ 7、蓝牙相关广播
+             Action值                                  说明
+      ACTION_STATE_CHANGED                    蓝牙状态值发生改变
+
+      ACTION_SCAN_MODE_CHANGED         蓝牙扫描状态(SCAN_MODE)发生改变
+
+      ACTION_DISCOVERY_STARTED             蓝牙扫描过程开始
+
+      ACTION_DISCOVERY_FINISHED             蓝牙扫描过程结束
+
+      ACTION_LOCAL_NAME_CHANGED        蓝牙设备Name发生改变
+
+      ACTION_REQUEST_DISCOVERABLE       请求用户选择是否使该蓝牙能被扫描
+
+                PS：如果蓝牙没有开启，用户点击确定后，会首先开启蓝牙，继而设置蓝牙能被扫描。
+
+      ACTION_REQUEST_ENABLE                  请求用户选择是否打开蓝牙
+
+       ACTION_FOUND  (该常量字段位于BluetoothDevice类中，稍后讲到)
+                说明：蓝牙扫描时，扫描到任一远程蓝牙设备时，会发送此广播。
+          通过注册这个广播，我们可以获取扫描到的蓝牙信息。方法如下：
+
+
+
+01.//扫描到了任一蓝牙设备   
+02.if(BluetoothDevice.ACTION_FOUND.equals(intent.getAction()))  
+03.{  
+04.   Log.v(TAG, "### BT BluetoothDevice.ACTION_FOUND ##");  
+05.                  
+06.   BluetoothDevice btDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);  
+07.                  
+08.   if(btDevice != null){  
+09.        Log.v(TAG , "Name : " + btDevice.getName() + " Address: " + btDevice.getAddress());  
+10.                      
+11.   }  
+12.   else if(BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(intent.getAction()))  
+13.   {  
+14.        Log.v(TAG, "### BT ACTION_BOND_STATE_CHANGED ##");  
+15.                  
+16.        int cur_bond_state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.BOND_NONE);  
+17.        int previous_bond_state = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.BOND_NONE);  
+18.               
+19.           
+20.        Log.v(TAG, "### cur_bond_state ##" + cur_bond_state + " ~~ previous_bond_state" + previous_bond_state);  
+21.    }  
+22.}  
+
+     
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Android对于蓝牙开发从2.0版本的sdk才开始支持，而且模拟器不支持，测试至少需要两部手机，所以制约了很多技术人员的开发。
+      1.  首先，要操作蓝牙，先要在AndroidManifest.xml里加入权限
+  // 管理蓝牙设备的权限  
+<uses-permissionandroid:name="android.permission.BLUETOOTH_ADMIN" />
+ // 使用蓝牙设备的权限  
+<uses-permissionandroid:name="android.permission.BLUETOOTH" />
+2.打开蓝牙
+获得蓝牙适配器（android.bluetooth.BluetoothAdapter），检查该设备是否支持蓝牙，如果支持，就打开蓝牙。
+
+// 检查设备是否支持蓝牙      
+adapter = BluetoothAdapter.getDefaultAdapter();    
+if (adapter == null)    
+{    
+    // 设备不支持蓝牙      
+}    
+// 打开蓝牙      
+if (!adapter.isEnabled())    
+{    
+    Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);    
+    // 设置蓝牙可见性，最多300秒      
+    intent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);    
+    context.startActivity(intent);    
+}   
+ 
+} 
+3.获取已配对的蓝牙设备（android.bluetooth.BluetoothDevice）
+首次连接某蓝牙设备需要先配对，一旦配对成功，该设备的信息会被保存，以后连接时无需再配对，所以已配对的设备不一定是能连接的。
+
+[java]
+BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();    
+Set<BluetoothDevice> devices = adapter.getBondedDevices();    
+for(int i=0; i<devices.size(); i++)+    
+{    
+   BluetoothDevice device = (BluetoothDevice) devices.iterator().next();    
+   System.out.println(device.getName());    
+}   
+
+
+4.搜索周围的蓝牙设备
+适配器搜索蓝牙设备后将结果以广播形式传出去，所以需要自定义一个继承广播的类，在onReceive方法中获得并处理蓝牙设备的搜索结果。
+// 设置广播信息过滤   
+IntentFilter intentFilter = new IntentFilter();  
+intentFilter.addAction(BluetoothDevice.ACTION_FOUND);  
+intentFilter.addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED);  
+intentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);  
+intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);  
+// 注册广播接收器，接收并处理搜索结果   
+context.registerReceiver(receiver, intentFilter);  
+// 寻找蓝牙设备，android会将查找到的设备以广播形式发出去   
+adapter.startDiscovery();  自定义广播类
+
+private BroadcastReceiver receiver = new BroadcastReceiver() {    
+   @Override    
+  public void onReceive(Context context, Intent intent) {    
+       String action = intent.getAction();    
+        if (BluetoothDevice.ACTION_FOUND.equals(action)) {    
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);    
+            System.out.println(device.getName());    
+       }    
+   }    
+} 
+
+
+5.蓝牙设备的配对和状态监视
+
+
+private BroadcastReceiver receiver = new BroadcastReceiver() {    
+    @Override    
+    public void onReceive(Context context, Intent intent) {    
+        String action = intent.getAction();    
+        if (BluetoothDevice.ACTION_FOUND.equals(action)) {    
+            // 获取查找到的蓝牙设备      
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);    
+            System.out.println(device.getName());    
+            // 如果查找到的设备符合要连接的设备，处理      
+            if (device.getName().equalsIgnoreCase(name)) {    
+                // 搜索蓝牙设备的过程占用资源比较多，一旦找到需要连接的设备后需要及时关闭搜索      
+                adapter.cancelDiscovery();    
+                // 获取蓝牙设备的连接状态      
+                connectState = device.getBondState();    
+                switch (connectState) {    
+                    // 未配对      
+                    case BluetoothDevice.BOND_NONE:    
+                        // 配对      
+                        try {    
+                            Method createBondMethod = BluetoothDevice.class.getMethod("createBond");    
+                            createBondMethod.invoke(device);    
+                        } catch (Exception e) {     
+                            e.printStackTrace();    
+                        }    
+                        break;    
+                    // 已配对      
+                    case BluetoothDevice.BOND_BONDED:    
+                        try {    
+                            // 连接      
+                           connect(device);    
+                        } catch (IOException e) {    
+                            e.printStackTrace();    
+                        }    
+                        break;    
+                }    
+            }    
+       } else if(BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {    
+            // 状态改变的广播      
+            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);    
+            if (device.getName().equalsIgnoreCase(name)) {     
+                connectState = device.getBondState();    
+                switch (connectState) {    
+                    case BluetoothDevice.BOND_NONE:    
+                        break;    
+                    case BluetoothDevice.BOND_BONDING:    
+                        break;    
+                    case BluetoothDevice.BOND_BONDED:    
+                        try {    
+                            // 连接      
+                            connect(device);    
+                        } catch (IOException e) {    
+                            e.printStackTrace();    
+                        }    
+                        break;    
+                }    
+            }    
+        }    
+    }    
+}   
+
+
+6.蓝牙设备的连接
+
+[java]
+private void connect(BluetoothDevice device) throws IOException {    
+    // 固定的UUID      
+    final String SPP_UUID = "00001101-0000-1000-8000-00805F9B34FB";    
+    UUID uuid = UUID.fromString(SPP_UUID);    
+    BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuid);    
+    socket.connect();    
+}   
+
+private void connect(BluetoothDevice device) throws IOException {  
+    // 固定的UUID   
+    final String SPP_UUID = "00001101-0000-1000-8000-00805F9B34FB";  
+    UUID uuid = UUID.fromString(SPP_UUID);  
+    BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuid);  
+    socket.connect();  
+} 
+.
+------------------------------------------------------------------------------------------------------------------------------------------------
+本篇文章来源于 Linux公社网站(www.linuxidc.com)  原文链接：http://www.linuxidc.com/Linux/2011-12/48374.htm
+
+
+ 
+
+1.BluetoothAdapter 顾名思义，蓝牙适配器，直到我们建立bluetoothSocket连接之前，都要不断操作它
+
+      BluetoothAdapter里的方法很多，常用的有以下几个：
+
+      cancelDiscovery() 根据字面意思，是取消发现，也就是说当我们正在搜索设备的时候调用这个方法将不再继续搜索
+
+      disable()关闭蓝牙
+
+      enable()打开蓝牙，这个方法打开蓝牙不会弹出提示，更多的时候我们需要问下用户是否打开，一下这两行代码同样是打开蓝牙，不过会提示用户：
+
+Intent enabler=new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+
+startActivityForResult(enabler,reCode);//同startActivity(enabler);
+
+      getAddress()获取本地蓝牙地址
+
+      getDefaultAdapter()获取默认BluetoothAdapter，实际上，也只有这一种方法获取BluetoothAdapter
+
+      getName()获取本地蓝牙名称
+
+      getRemoteDevice(String address)根据蓝牙地址获取远程蓝牙设备
+
+      getState()获取本地蓝牙适配器当前状态（感觉可能调试的时候更需要）
+
+      isDiscovering()判断当前是否正在查找设备，是返回true
+
+      isEnabled()判断蓝牙是否打开，已打开返回true，否则，返回false
+
+     listenUsingRfcommWithServiceRecord(String name,UUID uuid)根据名称，UUID创建并返回BluetoothServerSocket，这是创建BluetoothSocket服务器端的第一步
+
+      startDiscovery()开始搜索，这是搜索的第一步
+
+    2.BluetoothDevice看名字就知道，这个类描述了一个蓝牙设备
+
+       createRfcommSocketToServiceRecord(UUIDuuid)根据UUID创建并返回一个BluetoothSocket
+
+
+       这个方法也是我们获取BluetoothDevice的目的——创建BluetoothSocket
+
+
+       这个类其他的方法，如getAddress(),getName(),同BluetoothAdapter
+
+    3.BluetoothServerSocket如果去除了Bluetooth相信大家一定再熟悉不过了，既然是Socket，方法就应该都差不多，
+
+
+这个类一种只有三个方法
+
+
+两个重载的accept(),accept(inttimeout)两者的区别在于后面的方法指定了过时时间，需要注意的是，执行这两个方法的时候，直到接收到了客户端的请求（或是过期之后），都会阻塞线程，应该放在新线程里运行！
+
+
+还有一点需要注意的是，这两个方法都返回一个BluetoothSocket，最后的连接也是服务器端与客户端的两个BluetoothSocket的连接
+
+      close()这个就不用说了吧，翻译一下——关闭！
+
+    4.BluetoothSocket,跟BluetoothServerSocket相对，是客户端
+
+
+一共5个方法，不出意外，都会用到
+
+      close(),关闭
+
+      connect()连接
+
+      getInptuStream()获取输入流
+
+      getOutputStream()获取输出流
+
+      getRemoteDevice()获取远程设备，这里指的是获取bluetoothSocket指定连接的那个远程蓝牙设备
+
+
+

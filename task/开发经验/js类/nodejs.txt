@@ -1,0 +1,210 @@
+
+4、hello world  
+     cd e:/node_ws  运行node test.js
+5、命令行执行
+   cmd   node  开启node命令  可以console.log('111')  
+   会返回111 和undefined  第一行是输出 第2行是返回值
+
+6、npm  module [mad3ul]  模块 node package  module
+     npm install -g express   会下载到用户的/appdata/roaming/npm 中
+     一般系统应用 使用全局选项，否则都在工程当前目录下 npm install 安装在当前   工程的
+
+7、nodejs 完整环境搭建（window）
+   a、安装nodejs  b、npm install -g express/express-generator/supervisor
+   因为express4.0后 express 命令行单独抽出来了
+   b、创建一个workspace    mkdir  node_ws 
+   c、cmd  cd  node_ws 后  express -e helloworld   即创建一个helloworld名字的 express工程(ejs enginee否则默认是jade)
+   d、cd进helloworld 运行 npm install(会把package.json配置的依赖全部安装好包模块)  npm start  (用supervisor bin/www可以代替npm start命令)
+    后期添加外部模块 在当前目录下 安装模块  并且把package.json要包含这个（最好） 每个package一般都包含各自的lib/  config/  package.json  入口文件等等
+    
+ 
+8、global 全局对象
+   __dirname  (当前目录) //文件目录
+   __filename  （当前文件名 包含目录+文件名）
+
+   ------------------------------------------------------------------------
+   console:  日志重定向到文件
+    node  console.js >info.txt   node console.js  1>error.txt
+
+    console.log()    
+    console.info()
+    console.error()  
+    console.warn（）
+
+    console.time("flag");
+    for(var i=0;i<=10000;i++){
+    }
+    console.endTime("flag");//用于看代码执行时间
+   
+  
+   ------------------------------------------------------------------------
+   类似console对象
+   process.stdout.write("this  is  stdout write");
+   process.stderr.write("this is stderr write");
+
+   process.stdin.setEncoding("utf-8");
+   process.stdin.on("data",function(data){
+       consloe.log(data);//等待用户输入 按回车停止 cmd命令行打印data  
+    }
+   );
+   
+  process.cwd();//执行node命令 在哪个目录
+   
+  process.on("exit",function(){
+  });
+  
+  process.on("SIGINT"，functon(){
+  
+  });
+  
+
+  process.argv  值
+
+
+  process.nextTick()//拆分事件  
+  比如 一个回调函数 内部 有一个计算方法sum()   然后写数据方法wirte()  然后该回调函数才会执行  
+  但是我们使用nextTick()可以把那个write()
+  process.nextTick(write());这样这个方法就不会阻塞这个回调函数
+
+
+
+9、模块 包(module  package)
+   require("./sum.js");  //可以省掉.js后缀
+
+
+10、fs模块
+   fs.readFile("filepath","utf-8",function(error,data){
+   })
+11、path模块
+   var path=require("/path");
+   path.sep //"/" sep英文分隔符  为了适配window 和linux系统的路径分隔符
+   path.extname("filename")  //获取文件后缀名
+ 
+12、url模块
+    首先server中回调函数中 request，response 参数 分别get/post分别处理  
+    var  url=require("url");
+    var url_object=url.parse(req.url，true);//加入true 参数也会封装成对象
+    url_object.pathname="/index.html";
+    url_object.query="abc=xyz";//如果解析url 是true  可以直接 url_object.query.abc可以直接获取值
+    //get请求的时候 可以直接通过这种方式获取 post用事件处理 获取请求参数
+   //根据路径 /ajax 区分json请求  / 默认首页
+   fs.readFile("index.html","utf-8",function(error,data){
+       if(error){
+         rep.writeHead("404");
+         rep.write("content ...")
+         rep.end("file not exists");//可以直接rep.end()空 必须调用一次 不然req无法知道req完毕
+       }else{
+         colsole.log(data);//会把index.html 页面返回给前台
+      }
+   })
+    
+
+13 js加强
+   a、=== 与== 区别   
+     当比较true和false 时候 因为 null  "" flase  undefinded 都==false  但===就必须是boolean类型
+   b、array 
+      var ids=new Array();
+    ids.push()  插入到最后
+    ids.unshift()  插入到最前
+    ids.pop()  移除最后个
+    ids.shift() 移除最前个
+    ids.splice(1,2)//从1角标处  删除2个元素
+
+
+14、一个表单post到add,js去， 在请求注册回调事件  
+ var data="";
+ req.on("data",function(data){
+    data=data;
+ })
+ req.on("end",function(){
+      res.end(data);
+ })
+  
+15、require("querystring");
+   var  querystring=require("querystring");
+   var  person=querystring.parse(data);//类似前台框架 struts2 或springmvc的简单功能
+   可以解析输入参数
+
+
+
+
+16、package  module   实际使用中类似  module对应一个js类  
+   package包  官方要求 main lib  bin  package.json（包含版本  贡献者什么的）
+   
+
+   创建自定义包：
+   a、先按标准 把目录 bin  lib   等文件弄好
+   b、cd  mypackage    然后npm init  一步一步按提示写好就完成了package.json文件的创建
+   c、如果有需要可以上传到nodejs的官方论坛 供其他开源开发者下载
+
+17、全局的安装package会加入环境变量 所有在命令行可以使用
+     非全局安装的 只能在工程下 require里面获取  require只会搜索当前工程目录 不会搜索到user/appdata/roming/...
+     真实开发 一般非全局安装
+     npm -g  list  会列出全局下的所有包
+
+
+18、npm  eclipse 插件
+
+
+19、util模块
+    util.inherits(sub,base); 继承于父类原型扩展的方法 
+    function Base(){
+       name="base";
+       sayHello(){
+         console.log(this.name);
+       }
+    }
+    function Sub(){
+       name="sub"
+    }
+    Base.prototype.showName=function(){
+          console.log("my name="+this.name);
+    }
+    util.inherits(sub.base); 子类会继承自父类原型扩展的方法
+    var sub=new Sub();
+    sub.showName()//会打印覆盖后的name=sub
+
+    --------------------------------------------------------------------
+    util.inspect(obj)//把对象转成string  通常用于调试 非常好用
+
+
+   ------------------------------------------------------------------------
+
+
+20、event 非常重要的模块
+  
+   var event=require("events");
+  var  emitter=new event.EventEmitter();
+   //注册时间监听器
+  emitter.on("someEvent",function(arg1,agr2){
+     console.log("listener",agr1,agr2);
+  })
+  //发射
+  emitter.emit("someEvent","1","2");
+  实际开发中不是使用emitter 而是使用button的事件发放 这样才与实际面向对象吻合
+
+21 error
+  当错误的时候 程序停止 有时候需要要java 那样进行try操作的时候  注册error事件  
+  js 中try{}  catch(error){}
+   
+
+
+22、express框架
+    mk  dir  创建一个目录  类似workspace    cd到这里 express -e  hello
+    npm install  会运行express工程的 package.json依赖所有的包 会全部安装
+
+
+23、路径匹配
+   简单全部写在app.js 中
+   mvc写在不同的文件中
+  -----------------------------
+   不写死的路径匹配 甚至js正则也支持！
+   app.get("user/:username",function(req,res,next){
+       res.send("hello!"+req.parameter.username);
+       //访问路径后面的参数会被这个路径匹配localhost:3000/hello/user/chouchou 界面会显示hello!chouchou
+   });
+
+
+   
+
+    

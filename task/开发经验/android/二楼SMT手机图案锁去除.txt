@@ -1,0 +1,5 @@
+1、adb  shell
+2、进入data/system目录下
+3、LS下该目录文件 
+4、SU暂时获取权限
+5、rm  文件 

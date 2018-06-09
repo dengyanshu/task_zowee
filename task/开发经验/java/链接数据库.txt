@@ -1,0 +1,144 @@
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Types;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+
+public class testP {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+			  String driverNameOfSqlServer="com.microsoft.sqlserver.jdbc.SQLServerDriver";
+				// IP地址(改为自己的IP地址)
+			  String DatebaseIP="10.2.0.56";
+				
+				// 数据库用户名
+			  String DatabaseUser="mes2";
+				
+				// 数据库密码
+			  String DatabasePassword="mesmes";
+				
+				// 数据库名称
+			  String DatabaseName="OrBitX";
+					
+				// URL
+			  String DatabaseUrl="jdbc:sqlserver://"+DatebaseIP+":1433;DatabaseName="+DatabaseName;
+			  //String DatabaseUrl="jdbc:sqlserver://10.2.0.23";
+			
+			  //与特定数据库的连接（会话）。在连接上下文中执行 SQL 语句并返回结果。
+			  Connection conn=null;
+			  
+			  //用于执行 SQL 存储过程的接口
+			/* CallableStatement stmt  = null; */
+
+			//用于执行 SQL 的接口
+			Statement stmt  = null; 
+			  
+			  //表示数据库结果集的数据表
+			  ResultSet rs=null;
+			  
+			  try {
+				Class.forName(driverNameOfSqlServer);
+			} catch (ClassNotFoundException e) {
+				System.out.println("加载驱动器类出现异常");
+				e.printStackTrace();
+			}
+			  
+			  
+			  try {
+				conn=DriverManager.getConnection(DatabaseUrl,DatabaseUser,DatabasePassword);
+
+
+				
+				/*
+				// 存储过程 TEST_MICHAEL_NOOUT 其实是向数据库插入一条数据  
+				stmt=conn.prepareCall("{call GetDataWithPabe(?,?,?,?)}");
+			
+				stmt.setInt(1, 10);
+				stmt.setInt(2, 100);
+				stmt.registerOutParameter(3, Types.INTEGER);  // out 注册的index 和取值时要对应  
+				stmt.registerOutParameter(4, Types.INTEGER);  // out 注册的index 和取值时要对应    
+				stmt.execute();  
+				rs=stmt.getResultSet();	
+				*/
+
+				stmt=conn.createStatement();
+				String sql="";
+				rs=stmt.executeQuery(sql);
+
+				
+		
+				
+				//getMetaData();获取此 ResultSet 对象的列的编号、类型和属性。
+				ResultSetMetaData metaData = rs.getMetaData();
+				
+				//getColumnCount();返回此 ResultSet 对象中的列数。
+				int colunmCount = metaData.getColumnCount();
+				
+				//所有结果集的名称属性
+				String[] colNameArr = new String[colunmCount]; 
+				
+				//循环把结果集中的所有的名称属性放到数组中
+				for (int i = 0; i < colunmCount; i++) {  
+					colNameArr[i] = rs.getMetaData().getColumnName(i + 1); 
+				}
+				
+			    // json数组
+			    JSONArray array = new JSONArray();
+			    
+			    // 遍历ResultSet中的每条数据
+				while(rs.next()){
+					 JSONObject jsonObj = new JSONObject();
+					//System.out.println(rs.getString("name"));
+					for (int i = 1; i <= colunmCount; i++) {
+				//属性名称
+		                String columnName =metaData.getColumnLabel(i);
+		                //属性值
+		                String value = rs.getString(columnName);
+                                System.out.println(value);
+		                //添加到JSONObject数据中
+		                jsonObj.put(columnName, value);
+		            } 
+					array.add(jsonObj);
+				}
+				System.out.println(array);
+
+			  } catch (SQLException e) {
+				e.printStackTrace();
+			}finally{
+				if(null!=rs){
+					try {
+						rs.close();
+					} catch (SQLException e) {
+						// TODO 自动生成的 catch 块
+						e.printStackTrace();
+					}
+				}
+				
+				if(null!=stmt ){
+					try {
+						stmt .close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+				if(null!=conn){
+					try {
+						conn.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+
+		}
+}

@@ -1,0 +1,13 @@
+1、web   
+  cmd----webroot下--- jar cvf home.war ./ . 打包如下目录下所有  生成文件在本目录
+
+
+
+2、java工程打包
+   a、首先在工程下 自己新建一个MANIFEST.MF文件
+      Manifest-Version: 1.0
+      Class-Path: lib/c3p0-0.9.1.2.jar  lib/commons-codec-1.9.jar  lib/commons-dbutils-1.6.jar lib/commons-logging-1.2.jar lib/fluent-hc-4.5.3.jar lib/httpclient-4.5.3.jar lib/httpclient-cache-4.5.3.jar lib/httpclient-win-4.5.3.jar lib/httpcore-4.4.6.jar lib/httpmime-4.5.3.jar lib/jna-4.1.0.jar lib/jna-platform-4.1.0.jar lib/sqljdbc4.jar  
+      Main-Class: cn.chouchou.Core
+      第4行要留空  每行之间有空格
+   b、用eclipse导出jar文件 用新建的MANIFEST文件取代系统自动生成的
+   c、实际运行的时候还是需要lib里面的jar  打包里面的jar没有用

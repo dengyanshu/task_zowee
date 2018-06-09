@@ -1,0 +1,52 @@
+Ext.Ajax.request({
+             url: "wh/out/console/queryForPicking.do",
+             method: "GET",
+             async:false,
+             params:{logiNo : logiNo} ,
+             success: function(response, opts) {
+                    //播放报警声音
+                    playSound(this,'/dal_erp/asset/fail.wav')
+             },
+             failure: function(response, opts) {},
+             scope: this
+         });
+function playSound(sef, url) {
+ //创建div1的对象
+ var oDiv = document.createElement_x('div');
+ //创建div2的对象
+ var oDivPlay = document.createElement_x('div');
+ //添加div1
+ oDiv.innerHTML = '
+';
+ //添加div2
+ oDivPlay.innerHTML = '
+';
+ //加载div1
+ document.body.appendChild(oDiv);
+ //加载div2
+ document.body.appendChild(oDivPlay);
+ //调用div1
+ var div = document.getElementByIdx_x('div1');
+ div.innerHTML = '';
+ var emb = document.getElementsByTagName_r('EMBED')[0];
+ 
+ if (emb) {
+  div = document.getElementByIdx_x('div2');
+  sef.disabled = true;
+  setTimeout(1000);
+ }
+}
+理解：
+       playSound方法主要是将需要被播放的音频文件的url传入，通过创建div将embed标签进行播放。embed标签定义嵌入的内容，比如插件。是 HTML 5 中的新标签，同时必须有src属性。
+
+
+
+
+
+soundManager.onload=function(){
+ var sound=soundManager.createSound({
+  id: 'sound_id', 
+  url: 'assets/sample.mp3'
+ });
+ soundManager.play('sound_id');
+}

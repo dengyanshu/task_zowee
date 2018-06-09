@@ -1,0 +1,35 @@
+List<String> getResDatSet(String repStr)                             1
+       String resDataStr = getUseDataForDataPart(repStr)             2
+             String getUseDataForDataPart(String repStr)             3
+                 String getResDataStr(String repStr)                 4
+                     String getUsefulData(String repStr)             5
+
+
+
+
+
+原始的repStr是：
+GetDataSetWithSQLStringResponse{GetDataSetWithSQLStringResult=anyType{schema=anyType{element=anyType{complexType=anyType{choice=anyType{element=anyType{complexType=anyType{sequence=anyType{element=anyType{}; element=anyType{}; element=anyType{}; element=anyType{}; element=anyType{}; element=anyType{}; }; }; }; }; }; }; }; diffgram=anyType{SQLDataSet=anyType{SQLDataSet=anyType{EquipmentNumber=ALC01120624001; FixedAssetNumber=无线路由器; EquipmentLocation=anyType{}; }; SQLDataSet=anyType{EquipmentNumber=AFC01111001208; FixedAssetNumber=联想笔记本电脑; EquipmentLocation=技术中心实验室; }; }; }; }; }
+第5步处理变化为：
+   字符串截取成“diffgram=anyType{”并且去掉最后的2个"}"
+diffgram=anyType{SQLDataSet=anyType{SQLDataSet=anyType{EquipmentNumber=ALC01120624001; FixedAssetNumber=无线路由器; EquipmentLocation=anyType{}; }; SQLDataSet=anyType{EquipmentNumber=AFC01111001208; FixedAssetNumber=联想笔记本电脑; EquipmentLocation=技术中心实验室; }; }; };
+第4步处理变化为：
+   处理方式为判断包含"SQLDataSet"如不含直接返回null;
+   包含的话处理为：找到第一个“{”找到最后一个“}”  
+   int  start=str.indexOf("{")
+    int  end =str.lastIdexOf("}")
+    str.substring(start+1,end)
+   SQLDataSet=anyType{SQLDataSet=anyType{EquipmentNumber=ALC01120624001; FixedAssetNumber=无线路由器; EquipmentLocation=anyType{}; }; SQLDataSet=anyType{EquipmentNumber=AFC01111001208; FixedAssetNumber=联想笔记本电脑; EquipmentLocation=技术中心实验室; }; };
+第2、3步处理变化为：
+   SQLDataSet=anyType{EquipmentNumber=ALC01120624001; FixedAssetNumber=无线路由器; EquipmentLocation=anyType{}; }; SQLDataSet=anyType{EquipmentNumber=AFC01111001208; FixedAssetNumber=联想笔记本电脑; EquipmentLocation=技术中心实验室; }; 
+第1步处理后变化为：
+  list<String> resdataset=[EquipmentNumber=ALC01120624001; FixedAssetNumber=无线路由器; EquipmentLocation=;,EquipmentNumber=AFC01111001208; FixedAssetNumber=联想笔记本电脑; EquipmentLocation=技术中心实验室; ]
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+第二个步骤  将list<String>  resdataset 解析成list<HashMap<String,String>>
+原始的resdataset如上！
+ resdateset  遍历  成一条一条的String字符串然后获取字符串匹配到的 所有下角标值  
+

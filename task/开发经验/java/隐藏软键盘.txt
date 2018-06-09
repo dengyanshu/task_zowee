@@ -1,0 +1,28 @@
+隐藏软键盘
+
+装备上网 09:27:32
+EditText 不弹出软件键盘2011-05-17 12:291.EditText默认不弹出软件键盘 
+方法一： 
+在AndroidMainfest.xml中选择哪个activity，设置windowSoftInputMode属性为adjustUnspecified|stateHidden 
+例如：<activity android:name=".Main" 
+                  android:label="@string/app_name" 
+                  android:windowSoftInputMode="adjustUnspecified|stateHidden" 
+                  android:configChanges="orientation|keyboardHidden"> 
+            <intent-filter> 
+                <action android:name="android.intent.action.MAIN" /> 
+                <category android:name="android.intent.category.LAUNCHER" /> 
+            </intent-filter> 
+        </activity> 
+方法二： 
+让EditText失去焦点，使用EditText的clearFocus方法 
+例如：EditText edit=(EditText)findViewById(R.id.edit); 
+           edit.clearFocus(); 
+方法三： 
+强制隐藏Android输入法窗口 
+例如：EditText edit=(EditText)findViewById(R.id.edit);  
+           InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE); 
+           imm.hideSoftInputFromWindow(edit.getWindowToken(),0); 
+
+2.EditText始终不弹出软件键盘 
+例：EditText edit=(EditText)findViewById(R.id.edit); 
+       edit.setInputType(InputType.TYPE_NULL); 

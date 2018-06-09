@@ -1,0 +1,52 @@
+最近也在做这个东西就分享给你吧，如果你的程序是在连接上之后启动的，你最好使用如下方式获取已连接的蓝牙地址：
+
+BluetoothAdapter _blueAdapter = BluetoothAdapter.getDefaultAdapter();
+//注册a2dp监听
+_blueAdapter.getProfileProxy(_mParent,proxyListener,BluetoothProfile.A2DP);
+
+private BluetoothProfile.ServiceListener proxyListener = new BluetoothProfile.ServiceListener(){
+
+@Override
+public void onServiceConnected(int profile, BluetoothProfile proxy) {
+// TODO Auto-generated method stub
+SLog.Log('w',TAG,"BluetoothProfile profile: " + profile);
+if (proxy != null){
+List<BluetoothDevice> cd = proxy.getConnectedDevices();
+if (cd != null){
+SLog.Log('w',TAG,"BluetoothDevice size: " + cd.size());
+for (int i = 0 ; i < cd.size(); i++){
+BluetoothDevice t = cd.get(i);
+SLog.Log('w',TAG,"BluetoothDevice : " + t.getName() + "|" + t.getAddress()
+);
+if (reConnectDevice(t.getAddress())){
+SLog.Log('w',TAG,"select BluetoothDevice : " + t.getName() + 
+"|" + t.getAddress() + " connect sucess");
+break;
+}
+}
+} 
+}
+}
+
+@Override
+public void onServiceDisconnected(int profile) {
+// TODO Auto-generated method stub
+
+}
+
+};
+
+如果是蓝牙A2dp后连接的你最好接收下BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED广播
+
+如下处理：
+else if (BluetoothA2dp.ACTION_CONNECTION_STATE_CHANGED.equalsIgnoreCase(action)){
+BluetoothDevice mdevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+             int istate = intent.getIntExtra(BluetoothA2dp.EXTRA_STATE, -1);
+             int newState = intent.getIntExtra(BluetoothProfile.EXTRA_STATE, 0);
+             SLog.Log('w',TAG, "BluetoothA2dp ACTION_CONNECTION_STATE_CHANGED ：" + istate + "|" + newState + "," + mdevice); 
+             if (mdevice != null){
+             checkBlueToothA2dpState(mdevice,istate);
+             }
+}
+ 
+ 

@@ -1,0 +1,40 @@
+ if (convertView == null) {
+                convertView = mInflater.inflate(R.layout.list_item_icon_text,
+                        null);
+                holder = new ViewHolder();
+                holder.icon1 = (ImageView) convertView.findViewById(R.id.icon1);
+                holder.text1 = (TextView) convertView.findViewById(R.id.text1);
+                holder.icon2 = (ImageView) convertView.findViewById(R.id.icon2);
+                holder.text2 = (TextView) convertView.findViewById(R.id.text2);
+                convertView.setTag(holder);
+            }
+            else{
+                holder = (ViewHolder)convertView.getTag();
+            }
+            holder.icon1.setImageResource(R.drawable.icon);
+            holder.text1.setText(mData[position]);
+            holder.icon2 .setImageResource(R.drawable.icon);
+            holder.text2.setText(mData[position]);
+
+            // 停止计时
+            long endTime = System.nanoTime();
+            // 计算耗时
+            long val = (endTime - startTime) / 1000L;
+            Log.e("Test", "Position:" + position + ":" + val);
+            if (count < 100) {
+                if (val < 1000L) {
+                    sum += val;
+                    count++;
+                }
+            } else
+                mTV.setText(String.valueOf(sum / 100L));// 显示统计结果
+            return convertView;
+        }
+    }
+
+    static class ViewHolder {
+        TextView text1;
+        ImageView icon1;
+        TextView text2;
+        ImageView icon2;
+    }

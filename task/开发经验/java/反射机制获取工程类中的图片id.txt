@@ -1,0 +1,21 @@
+android 使用反射机制获取工程中的图片
+private static final List<Integer> imageList = new ArrayList<Integer>();
+    static {
+        Field[] fields = R.drawable.class.getDeclaredFields();
+        for (Field field : fields) {
+            if (field.getName().startsWith("ima_")
+                    && !field.getName().endsWith(".icon"))// 可以自定义的加上过滤条件(除了icon之外的图片)
+            {
+                int index = 0;
+                try {
+                    index = field.getInt(R.drawable.class);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                // imageList保存图片ID
+                imageList.add(index);
+            }
+        }
+    }

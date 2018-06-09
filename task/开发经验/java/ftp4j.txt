@@ -1,0 +1,178 @@
+android ftp 客户端编写（ftp4j） 博客分类： android
+ .
+java中的ftp4j是个不错的框架，可以用于java实现ftp的一些操作。 
+这个框架已经实现了ftp的功能，如果需要移植到android，就需要一些界面元素与后台进程。 
+android这样直接利用现在的java框架完成一些事情是比较容易的。 
+ftp4j的文档还是蛮全的，而且容易读懂。 
+
+
+Java代码  
+1.使用方法：   
+2.FTPClient client = new FTPClient();   
+3.client.connect("ftp.host.com", 8021);   
+4.client.login("carlo", "mypassword");   
+5.没有异常表示连接成功，否则会垫子抛出FTPException异常。   
+6.当然还有一些重载方法，如果端口为21就可以用client.connect(host);   
+7.  
+8.为了处理匿名的登录，可以client.login("anonymous", "ftp4j");，用户名是anonymous，密码随意。   
+9.  
+10.登录之后需要对服务器进行操作，如目录显示，进入等；   
+11.String dir = client.currentDirectory(); 显示当前目录   
+12.修改进入的目录   
+13.client.changeDirectory(newPath);   
+14.可以使用相对路径，也可以使用绝对路径，下面两种都可以。   
+15.client.changeDirectory("/an/absolute/one");   
+16.client.changeDirectory("relative");   
+17.如果只想进入上一层：client.changeDirectoryUp();   
+18.  
+19.ftp4j中有两个特别目录“.",".."，分别表示根目录与上一层目录。   
+20.  
+21.重命名:client.rename("oldname", "newname");   
+22.或移动文件：client.rename("myfile.txt", "myfolder/myfile.txt");   
+23.删除文件：client.deleteFile(relativeOrAbsolutePath);可以使用相对或绝对路径。   
+24.创建目录：client.createDirectory("newfolder");   
+25.删除目录：client.deleteDirectory(absoluteOrRelativePath);   
+26.  
+27.显示文件，目录，链接   
+28.由于服务器的不同，所以返回的文件列表格式也不同，可能是UNIX，也可能是WIN的。ftp4j目录支持：   
+29.UNIX style and variants (i.e. MAC style)   
+30.DOS style   
+31.NetWare styles   
+32.EPLF   
+33.MLSD   
+34.  
+35..显示当前的目录文件：FTPFile[] list = client.list();   
+36.FTPFile包含了所需要的信息，从type可以知道是目录还是文件，或链接。   
+37.除此外还可以过滤：   
+38.FTPFile[] list = client.list("*.jpg");过滤了，只显示图片   
+39.  
+40.如果想知道修改上期，需要单独获取，不能从上面的list()方法得到：   
+41.java.util.Date md = client.modifiedDate("filename.ext");   
+42.  
+43.接下来就是上传与下载了：   
+44.client.download("remoteFile.ext", new java.io.File("localFile.ext"));   
+45.client.upload(new java.io.File("localFile.ext"));   
+46.追加内容的上传   
+47.client.append(new java.io.File("localFile.ext"));   
+48.这些是阻塞方法，只有在完成后才返回，所以一个FTPClient只能在同时进行一个传输。如果你想多个文件同时传输，可以使用多个FTPClient，FTPClient单独连接服务器。   
+49.  
+50.当今的软件不能只是功能上实现了，还需要注意用户体验，所以上传下下载需要知道进度，ftp4j都通过FTPDataTransferListener这个接口来实现的，如果有一个方法：   
+51.public void transferred(int length) {   
+52.// Yet other length bytes has been transferred since the last time this   
+53.这个方法是说在距上一次传输到这一次传输的内容多少，   
+54.如果要有一个进度条，需要知道总量，然后当前传输的量，所以需要进行一些处理，如在开始上传时，获取本地文件上传大小，然后从这个接口中得到已经传输的文件叠加起来得到已经传输文件总量的大小，再计算得到进度。   
+55.  
+56.从FTPClient中可以知道：在上传时：listener.transferred(l);l表示这次传输的量，但这似乎不是我们想要的，   
+57.修改为：listener.transferred(done);这个done表示的是上传的总量，是已经存在的，直接使用就好了。   
+58.}   
+59.  
+60.然后就可以通过重载方法加入这个监听器client.download("remoteFile.ext", new java.io.File("localFile.ext"), new MyTransferListener());，其它略了。   
+61.  
+62.对同一个FTPClient，多个线程间的操作是有影响的，如可以在其它线程中调用abortCurrentDataTransfer()来结当前的传输行为。   
+63.这个方法传入 false表示突然停止，传入true表示发送ABOR命令，是个合法的结束。然后会有FTPAbortedException异常。   
+64.  
+65.ftp4j还支持断点：   
+66.client.download("remoteFile.ext", new java.io.File("localFile.ext"), 1056);表示从1057开始，前面的不需要再传输了。   
+67.上传也类似 。   
+68.  
+69.主动与被动的传输：   
+70.主动的传输行为：   
+71.客户端发送ip地址与端口号到服务器   
+72.客户端请求服务器传输数据，开始监听端口   
+73.服务器连接地址与端口   
+74.数据传输由一个新的通道开始传输。   
+75.主动的需要客户端支持接收信息如果客户端有防火墙，代理等，会有些问题，   
+76.  
+77.被动的传输行为：   
+78.客户端请求服务器准备被动的数据传输。   
+79.服务器回复并带有ip与端口。   
+80.客户端请求传输也连接。   
+81.数据传输由一个新的通道开始传输。   
+82.  
+83.通过以下方式改变：   
+84.client.setPassive(false); // Active mode   
+85.client.setPassive(true); // Passive mode   
+86.默认是被动的。   
+87.这些属性可以通过系统属性来设置 ：   
+88.如ftp4j.activeDataTransfer.acceptTimeout设置超时时间：   
+89.java -Dftp4j.activeDataTransfer.hostAddress=178.12.34.167  
+90.     -Dftp4j.activeDataTransfer.portRange=6000-7000  
+91.     -Dftp4j.activeDataTransfer.acceptTimeout=5000 MyClass   
+92.  
+93.Set property values directly in the code. I.e.:   
+94.System.setProperty("ftp4j.activeDataTransfer.hostAddress", "178.12.34.167");   
+95.System.setProperty("ftp4j.activeDataTransfer.portRange", "6000-7000");   
+96.System.setProperty("ftp4j.activeDataTransfer.acceptTimeout", "5000");   
+97.  
+98.二进制与文本传输类型：   
+99.从源码可以看出是以后缀名来判断文件的类型，所以个人认为，上传的文件需要自己知道什么类型的，不小心将二进制文件改为txt后缀，可能会有些问题。   
+100.client.setType(FTPClient.TYPE_TEXTUAL);   
+101.client.setType(FTPClient.TYPE_BINARY);   
+102.client.setType(FTPClient.TYPE_AUTO);   
+103.当然它提供了一些自定义的类型client.setTextualExtensionRecognizer(myRecognizer);   
+104.  
+105.一些服务器支持数据压缩传输，叫MODE Z。可以通过client.setCompressionEnabled(true);打开，在这之前可以确认：boolean compressionEnabled = client.isCompressionEnabled();   
+106.  
+107.站点规范与命令：   
+108.FTPReply reply = client.sendSiteCommand("YOUR COMMAND");   
+109.也可以自定义命令   
+110.FTPReply reply = client.sendCustomCommand("YOUR COMMAND");   
+111.都返回一个FTPReply对象。可以从这个对象得到一些返回代码，信息等内容。   
+112.  
+113.-----------------------------------------------   
+114.上面是ftp4j的文档的一些知识。有了以上知识，开发一个android客户端就相对容易多了。   
+115.如我想得到服务器的文件目录操作（选择文件，选择目录，进入目录）   
+116.就可以使用ListView+ListAdapter显示目录与文件，然后由于 android的操作可以使用OnItemLongClickListener长按与短按OnItemClickListener分别指定一些操作，如短按可以选择为进入目录：   
+117.public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {   
+118.            FTPFile ftpFile=mFileList.get(i);   
+119.            String filename=ftpFile.getName();   
+120.            if ("..".equals(filename)) {   
+121.                Log.d(TAG, "change directory up.");   
+122.                changeDirectoryUp();   
+123.            } else if (".".equals(filename)) {   
+124.                Log.d(TAG, "change directory root");   
+125.                changeDirectory("/");   
+126.            } else {   
+127.                if (ftpFile.getType()==FTPFile.TYPE_DIRECTORY) {   
+128.                    Log.d(TAG, "change directory:"+filename);   
+129.                    changeDirectory(filename);   
+130.                }   
+131.            }   
+132.        }   
+133.  
+134.mFtpClient.changeDirectory(path);   
+135.mFtpClient.changeDirectoryUp();就是上面最终调用的方法。   
+136.然后在长按中：   
+137.FTPFile ftpFile=mFileList.get(i);   
+138.            String filename=ftpFile.getName();   
+139.            if ("..".equals(filename)||".".equals(filename)) {   
+140.                Log.d(TAG, "在这里没有处理");   
+141.            } else {   
+142.                if (ftpFile.getType()==FTPFile.TYPE_DIRECTORY) {   
+143.                    Log.d(TAG, "change directory:"+filename);   
+144.                    selectDirectory(filename);   
+145.                }   
+146.            }   
+147.selectDirectory()方法就是作为选中目录上传目的地。然后可以将本地文件传入这个目录。   
+148.在改变目录后调用：   
+149.private void refreshFiles(FTPClient mFtpClient) throws IOException, FTPIllegalReplyException, FTPException {   
+150.        FTPFile[] files=new FTPFile[0];   
+151.        try {   
+152.            files=mFtpClient.list();   
+153.            List<FTPFile> ftpFiles=(List<FTPFile>) Arrays.asList(files);   
+154.            mFileList.clear();   
+155.            mFileList.addAll(ftpFiles);   
+156.            Message message=Message.obtain(mHandler, REFRESH_FILE);   
+157.            message.obj=mFtpClient.currentDirectory();   
+158.            mHandler.sendMessage(message);   
+159.//这里就是刷新ListView。   
+160.        } catch (FTPDataTransferException e) {   
+161.            e.printStackTrace();   
+162.        } catch (FTPAbortedException e) {   
+163.            e.printStackTrace();   
+164.        } catch (FTPListParseException e) {   
+165.            e.printStackTrace();   
+166.        }   
+167.    }   
+168.  
+169.提供了上传下载的功能后，就可以使用它了，建立一个简单的ftp服务器，HOMEftpserver就是个不错的东西，然后拍照或录像再上传。其它就不说了，直接传代码上来。完成的程序可以使用，只是有些简陋，仅供参考。目前的需求就是拍照来录像后上传到ftp。  

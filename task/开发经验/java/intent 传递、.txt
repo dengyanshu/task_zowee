@@ -1,0 +1,3 @@
+Bundle bundle = new Bundle();bundle.putSerializable(”data“, listData );newIntent.putExtras(bundle);startActivityForResult(newIntent, 0);
+装备上网 16:48:30
+在another类中的oncreate（）方法取List<Map<String, Object>> listData = new ArrayList<Map<String, Object>>();public void onCreate(Bundle savedInstanceState) {super.onCreate(savedInstanceState);Intent intent = getIntent();Bundle bundle = intent.getExtras();List<Map<String, Object>> listData= (List) bundle.getSerializable(”data“);}

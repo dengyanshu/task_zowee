@@ -1,0 +1,91 @@
+
+
+
+//自定义Dialog  
+    class myDialog extends Dialog{  
+          
+        private Window window = null;  
+          
+        public myDialog(Context context)  
+        {  
+            super(context);  
+        }  
+          
+        public void showDialog(int layoutResID, int x, int y){  
+            setContentView(layoutResID);  
+              
+            windowDeploy(x, y);  
+              
+            //设置触摸对话框意外的地方取消对话框  
+            setCanceledOnTouchOutside(true);  
+            show();  
+        }  
+          
+        //设置窗口显示  
+        public void windowDeploy(int x, int y){  
+            window = getWindow(); //得到对话框  
+            window.setWindowAnimations(R.style.dialogWindowAnim); //设置窗口弹出动画  
+            window.setBackgroundDrawableResource(R.color.vifrification); //设置对话框背景为透明  
+            WindowManager.LayoutParams wl = window.getAttributes();  
+            //根据x，y坐标设置窗口需要显示的位置  
+            wl.x = x; //x小于0左移，大于0右移  
+            wl.y = y; //y小于0上移，大于0下移    
+//            wl.alpha = 0.6f; //设置透明度  
+//            wl.gravity = Gravity.BOTTOM; //设置重力  
+            window.setAttributes(wl);  
+        }  
+    }  
+}  
+   
+   
+设置窗口弹出，退出动画在res/values下创建style  
+<?xml version="1.0" encoding="utf-8"?>  
+<!-- 设置dialog弹出，退出动画 -->  
+  
+<resources>  
+    <style name="dialogWindowAnim" parent="android:Animation" mce_bogus="1">  
+        <item name="android:windowEnterAnimation">@anim/dialog_enter_anim</item>  
+        <item name="android:windowExitAnimation">@anim/dialog_exit_anim</item>  
+    </style>  
+      
+</resources>  
+   
+在res/anim下创建，设置dialog窗口弹出动画  
+<?xml version="1.0" encoding="utf-8"?>  
+  
+<!-- 弹出时动画 -->  
+<set xmlns:android="http://schemas.android.com/apk/res/android">  
+    <scale   
+        android:interpolator="@android:anim/accelerate_interpolator"  
+        android:fromXScale="1.0"  
+        android:toXScale="1.0"  
+        android:fromYScale="0.0"  
+        android:toYScale="1.0"  
+        android:pivotX="0%"  
+        android:pivotY="100%"  
+        android:fillAfter="false"  
+        android:duration="400"/>  
+</set>  
+   
+在res/anim下创建，设置dialog窗口退出动画  
+<?xml version="1.0" encoding="utf-8"?>  
+<!-- 退出时动画效果 -->  
+<set xmlns:android="http://schemas.android.com/apk/res/android">  
+    <scale   
+        android:interpolator="@android:anim/accelerate_interpolator"  
+        android:fromXScale="1.0"  
+        android:toXScale="1.0"  
+        android:fromYScale="1.0"  
+        android:toYScale="0.0"  
+        android:pivotX="0%"  
+        android:pivotY="100%"  
+        android:fillAfter="false"  
+        android:duration="400"/>  
+</set>  
+   
+在res/values下创建color  
+<?xml version="1.0" encoding="utf-8"?>  
+<resources>  
+    <color name="vifrification">#00000000</color>   <!-- 透明 -->  
+</resources>  
+   

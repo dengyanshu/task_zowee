@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="2dp"
+    tools:context=".activity.CheckMoNamesActivity" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/lightblue"
+         >
+         
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="70dp"
+            
+           
+            android:src="@drawable/logo3" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="脉冲焊接机" 
+            android:textSize="35sp"
+            android:textColor="@color/red"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center"
+            android:padding="8dp"
+            />
+
+        
+        
+    </LinearLayout>
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        >
+        <!-- 焊机机波形图显示 -->
+        <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:id="@+id/hanjieji_boxingchart"
+         >
+       </LinearLayout>
+       <!-- 配置界面显示 -->
+        <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@color/lightblue"
+         >
+             <!-- 单片机配置界面显示 -->
+            <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:background="@drawable/corners_bg"
+           android:padding="5dp"
+           android:layout_margin="10dp"
+            >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+                    
+                    <TextView 
+                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="单片机参数"
+                        android:textSize="20sp"
+                         android:textColor="@color/gold"
+                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:gravity="center"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                            android:text="开始温度(摄氏度)：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            
+                            />
+
+                        <EditText
+                            android:id="@+id/hanjieji_begintem"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:text="100"
+                            >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                            android:text="吹气冷却时(10ms)：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            />
+
+                        <EditText
+                            android:id="@+id/hanjieji_chuiqishijian"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:text="500"
+                             >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                             android:text="加热超时时(10ms)：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                             />
+
+                        <EditText
+                            android:id="@+id/hanjieji_chaoshishijian"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <Button
+                        android:id="@+id/hanjieji_settoplcbutton"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:text="设置到单片机" 
+                        android:textColor="@color/red"
+                       android:textAppearance="?android:attr/textAppearanceMedium"
+                        />
+
+                </LinearLayout>
+ 
+           </LinearLayout>
+          <!-- 温控仪配置界面显示 -->
+          
+          <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="horizontal"
+           android:background="@drawable/corners_bg"
+           android:padding="5dp"
+           android:layout_marginLeft="10dp"
+           android:layout_marginRight="10dp"
+            >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+                    
+                    
+                    <TextView 
+                         android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="温控仪参数"
+                        android:textSize="20sp"
+                         android:textColor="@color/gold"
+                         android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:gravity="center"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                             android:text="第一段温度(摄氏度)：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            />
+
+                        <EditText
+                            android:id="@+id/hanjieji_onetemp"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                             android:text="第一段上升斜率：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                             />
+
+                        <EditText
+                            android:id="@+id/hanjieji_oneshengwenshijian"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                             >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                         <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                             android:text="第一段保温时间(S)：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                             />
+
+                        <EditText
+                            android:id="@+id/hanjieji_onebaowenshijian"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                             android:text="第二段温度(摄氏度)：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            />
+
+                        <EditText
+                            android:id="@+id/hanjieji_twotemp"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                             android:text="第二段上升斜率：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            />
+
+                        <EditText
+                            android:id="@+id/hanjieji_twoshengwenshijian"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                             android:text="第二段焊接时间(S)：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            />
+
+                        <EditText
+                            android:id="@+id/hanjieji_twobaowenshijian"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                             android:text="第三段温度(摄氏度)：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            />
+
+                        <EditText
+                            android:id="@+id/hanjieji_threetemp"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <TextView
+                            android:layout_width="175dp"
+                            android:layout_height="wrap_content"
+                             android:text="第三段下降斜率：" 
+                            android:textColor="@color/red"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            />
+
+                        <EditText
+                            android:id="@+id/hanjieji_threexiajiangshijian"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            >
+
+                           
+                        </EditText>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" >
+
+                    <Button
+                        android:id="@+id/hanjieji_settowenkongyibutton"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:text="设置到温控仪" 
+                        android:textColor="@color/red"
+                       android:textAppearance="?android:attr/textAppearanceMedium"
+                        
+                        />
+
+                </LinearLayout>
+ 
+           </LinearLayout>
+        
+       </LinearLayout>
+       
+     
+    </LinearLayout>
+   
+</LinearLayout>

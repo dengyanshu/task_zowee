@@ -1,0 +1,15 @@
+CASE WHEN有两种用法，一种是类似上面例子中那样的简单CASE函数：
+CASE result
+    WHEN '胜' THEN 1
+    WHEN '负' THEN 2
+ELSE 0
+END
+还有一种是CASE搜索函数：
+CASE WHEN result='胜' THEN 1
+     WHEN result='负' THEN 2
+ELSE 0
+END
+其中result='胜'可以替换为其他条件表达式。如果有多个CASE WHEN表达式符合条件，将只返回第一个符合条件的子句，其余子句将被忽略。
+用CASE WHEN语句可以简化我们平时工作中遇到的很多问题。如性别在表中存的是数字1、2，但是希望查询出来男、女时，可以这样：
+select (case Gender when 1 then '男' when 2 then '女' else '其他' end) as Gender from Table1
+是不是很强大呢？

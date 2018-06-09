@@ -1,0 +1,134 @@
+
+
+
+01
+02.  
+03.import org.ksoap2.SoapEnvelope;  
+04.import org.ksoap2.serialization.SoapObject;  
+05.import org.ksoap2.serialization.SoapSerializationEnvelope;  
+06.import org.ksoap2.transport.HttpTransportSE;  
+07.  
+08.import android.app.Activity;  
+09.import android.os.Bundle;  
+10.import android.view.View;  
+11.import android.view.View.OnClickListener;  
+12.import android.widget.Button;  
+13.import android.widget.EditText;  
+14.import android.widget.TextView;  
+15.  
+16
+22.public class MainActivity extends Activity {  
+23.    private EditText phoneSecEditText;  
+24.    private TextView resultView;  
+25.    private Button queryButton;  
+26.  
+27.    @Override  
+28.    public void onCreate(Bundle savedInstanceState) {  
+29.        super.onCreate(savedInstanceState);  
+30.        setContentView(R.layout.main);  
+31.  
+32.        phoneSecEditText = (EditText) findViewById(R.id.phone_sec);  
+33.        resultView = (TextView) findViewById(R.id.result_text);  
+34.        queryButton = (Button) findViewById(R.id.query_btn);  
+35.  
+36.        queryButton.setOnClickListener(new OnClickListener() {  
+37.            @Override  
+38.            public void onClick(View v) {  
+39.                // 手机号码（段）   
+40.                String phoneSec = phoneSecEditText.getText().toString().trim();  
+41.                // 简单判断用户输入的手机号码（段）是否合法   
+42.                if ("".equals(phoneSec) || phoneSec.length() < 7) {  
+43.                    // 给出错误提示   
+44.                    phoneSecEditText.setError("您输入的手机号码（段）有误！");  
+45.                    phoneSecEditText.requestFocus();  
+46.                    // 将显示查询结果的TextView清空   
+47.                    resultView.setText("");  
+48.                    return;  
+49.                }  
+50.                // 查询手机号码（段）信息   
+51.                getRemoteInfo(phoneSec);  
+52.            }  
+53.        });  
+54.    }  
+55.  
+56.    /** 
+57.     * 手机号段归属地查询 
+58.     *  
+59.     * @param phoneSec 手机号段 
+60.     */  
+61.    public void getRemoteInfo(String phoneSec) {  
+62.        // 命名空间   
+63.        String nameSpace = "http://WebXml.com.cn/";  
+64.        // 调用的方法名称   
+65.        String methodName = "getMobileCodeInfo";  
+66.        // EndPoint   
+67.        String endPoint = "http://webservice.webxml.com.cn/WebServices/MobileCodeWS.asmx";  
+68.        // SOAP Action   
+69.        String soapAction = "http://WebXml.com.cn/getMobileCodeInfo";  
+70.  
+71.        // 指定WebService的命名空间和调用的方法名   
+72.        SoapObject rpc = new SoapObject(nameSpace, methodName);  
+73.  
+74.        // 设置需调用WebService接口需要传入的两个参数mobileCode、userId   
+75.        rpc.addProperty("mobileCode", phoneSec);  
+76.        rpc.addProperty("userId", "");  
+77.  
+78.        // 生成调用WebService方法的SOAP请求信息,并指定SOAP的版本   
+79.        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER10);  
+80.  
+81.        envelope.bodyOut = rpc;  
+82.        // 设置是否调用的是dotNet开发的WebService   
+83.        envelope.dotNet = true;  
+84.        // 等价于envelope.bodyOut = rpc;   
+85.        envelope.setOutputSoapObject(rpc);  
+86.  
+87.        HttpTransportSE transport = new HttpTransportSE(endPoint);  
+88.        try {  
+89.            // 调用WebService   
+90.            transport.call(soapAction, envelope);  
+91.        } catch (Exception e) {  
+92.            e.printStackTrace();  
+93.        }  
+94.  
+95.        // 获取返回的数据   
+96.        SoapObject object = (SoapObject) envelope.bodyIn;  
+97.        // 获取返回的结果   
+98.        String result = object.getProperty(0).toString();  
+99.  
+100.        // 将WebService返回的结果显示在TextView中   
+101.        resultView.setText(result);  
+102.    }  
+103.}  
+
+
+
+
+
+      注意点1：如代码中的62-69行所示，调用Web Service之前你需要先弄清楚这4个的值分别是什么：命名空间、调用的方法名称、EndPoint和SOAP Action。当在浏览器中访问WSDL时，很容易得知命名空间、调用的方法名称是什么（不明白的请看上篇文章），至于EndPoint通常是将WSDL地址末尾的"?wsdl"去除后剩余的部分；而SOAP Action通常为命名空间 + 调用的方法名称。
+      注意点2：75-76行是设置调用WebService接口方法需要传入的参数。（在WSDL中能够看到调用方法需要传入的参数个数及参数名称，在设置参数时最好指明每一个传入参数的名称，如本例中的mobileCode、userId。网上有些资料说在需要传入多个参数时，只要多个参数的顺序与WSDL中参数出现的顺序一致即可，名称并不需要和WSDL中的一致，但实际测试发现，大多数情况下并不可行！）
+      例如下面图版上显示的WSDL片段，调用该Web Service的checkUserInfo方法就需要传入4个参数，参数名称分别为：in0、in1、in2和in3。
+           
+      注意点3：也许你会对第100行代码产生疑惑，为什么要用object.getProperty("getMobileCodeInfoResult")来取得调用结果？
+那是因为WSDL中明确告诉了返回结果是String数组，它的名称为getDatabaseInfoResult，WSDL中的描述如下：
+           <s:elementminOccurs="0" maxOccurs="1" name="getDatabaseInfoResult" type="tns:ArrayOfString" /> 
+      本例中调用WebService后返回的结果如下所示：
+           <?xml version="1.0" encoding="utf-8"?> 
+            <string xmlns="http://WebXml.com.cn/">1398547：贵州 贵阳 贵州移动黔中游卡</string>
+咦，这里明明返回的是xml格式的内容，为什么我们不需要通过解析xml来获取我们需要的内容呢？其实如果你仔细看代码中的96-97行并不难发现：
+            // 获取返回的数据
+            SoapObject object = (SoapObject) envelope.bodyIn;
+ksoap2能够将返回的xml转换成SoapObject对象，然后我们就可以通过操作对象的方式来获取需要的数据了。
+      注意点4：同样还是第100行代码。从有些WSDL中我们并不能得知返回结果的名称（如本例中的getMobileCodeInfoResult），那又该如何调用呢？
+其实上面已经暗示了这个问题：当通过第97行代码获取返回结果并将其转换成SoapObject对象后，如果你并不知道通过该对象的哪个属性来取值，
+你完全可以调用对象的toString()方法来查看返回的内容，例如将本例中的第100行代码替换成：
+            // 获取返回的结果
+             String result = object.toString();
+这样得到的返回结果为：
+      
+注意看括号{}里面的内容是一个键-值对形式，以等号=分隔，我们正是通过=号左边的“getMobileCodeInfoResult”来获取右边的查询结果。
+      其实在不知道返回结果名称时（如本例的100行，我们并不知道返回结果中有属性getMobileCodeInfoResult），有一种更为简便的方法，直接通过索引下标来获取属性值，也就是将第100行代码替换为：
+            String result = object.getProperty(0).toString();
+      注意点5：本例中只返回了一个值，但有些WebService会返回多个值该怎么获取？获取方法与本例完全一样，只是需要注意的是如果是返回多个值，通过第100代码object.getProperty(0);得到的可能仍然是一个SoapObject。不断地调用getProperty()方法；总能得到你想要的全部结果。
+      注意点6：在调用某些WebService时，可能会报一些异常，但你又发现除了调用的WebService不同之外，其它地方的写法和我的完全一样，这又该如何解决呢？尝试改变第79代码中SOAP的版本号，可以分别尝试使用SoapEnvelope.VER10、SoapEnvelope.VER11、SoapEnvelope.VER12这样三个值。另外，在调用某些WebService时，可能在第91行代码中，调用WebService时并不需要传入soapAction，将其置为null即可。
+
+

@@ -1,0 +1,589 @@
+	友善之臂的Android系统有他们自己编写的一个串口通信程序，网上没有找到他的源代码，而且界面操作不在一个界面，不是很方便，这里我自己写了一个粗糙点的串口通信程序。
+	同样这里还是调用友善之臂的friendlyarm-hardware.so库文件。
+	在Android工程文件下面加入com.friendlyarm.androidSDK包，在其下添加HardwareControler.java。下面我把我做的截图发上来。
+                                                 
+主程序代码：
+1.package geekle.lab;
+
+2.
+
+3.import android.app.Activity;
+
+4.import android.os.Bundle;
+
+5.import android.os.Handler;
+
+6.import android.os.Message;
+
+7.import android.text.method.ScrollingMovementMethod;
+
+8.import android.util.Log;
+
+9.import android.view.View;
+
+10.import android.view.View.OnClickListener;
+
+11.import android.view.WindowManager;
+
+12.import android.widget.AdapterView;
+
+13.import android.widget.ArrayAdapter;
+
+14.import android.widget.Button;
+
+15.import android.widget.EditText;
+
+16.import android.widget.Spinner;
+
+17.import android.widget.TextView;
+
+18.import android.widget.Toast;
+
+19.
+
+20.import com.friendlyarm.AndroidSDK.HardwareControler;
+
+21.
+
+22.public class SerialPortActivity extends Activity
+
+23.{
+
+24.    private static final String[] serial_port={"/dev/s3c2410_serial0","/dev/s3c2410_serial1","/dev/s3c2410_serial2"};
+
+25.    private static final String[] baud_rate={"4800","9600","19200","115200"};
+
+26.    
+
+27.    TextView chooseserialPortView;
+
+28.    TextView choosebaudRateView;
+
+29.    TextView commucationView;
+
+30.    EditText editmsg;
+
+31.    private Button stopButton;
+
+32.    private Button sendButton;
+
+33.    private Spinner choose_serialport;
+
+34.    private Spinner choose_baudrate;
+
+35.    private ArrayAdapter<String> serialportAdapter;
+
+36.    private ArrayAdapter<String> baudrateAdaptera;
+
+37.    
+
+38.    private int fd = 0;
+
+39.    String thread = "readThread";
+
+40.    String choosed_serial = "/dev/s3c2410_serial2";
+
+41.    int choosed_buad = 19200;
+
+42.    byte[] buf= new byte[300];
+
+43.
+
+44.    /** Called when the activity is first created. */
+
+45.    @Override
+
+46.    public void onCreate(Bundle savedInstanceState)
+
+47.    {
+
+48.        super.onCreate(savedInstanceState);
+
+49.        setContentView(R.layout.main);
+
+50.        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//设置全屏
+
+51.        chooseserialPortView = (TextView)findViewById(R.id.choose_serialPort_text);
+
+52.        choose_serialport = (Spinner)findViewById(R.id.choose_seriaPort_spinner);
+
+53.        chooseserialPortView = (TextView)findViewById(R.id.choose_baudRate_text);
+
+54.        choose_baudrate = (Spinner)findViewById(R.id.choose_baudRate_spinner);
+
+55.                
+
+56.        serialportAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line,serial_port);//建立下拉控件的适配器
+
+57.        baudrateAdaptera = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line,baud_rate);
+
+58.        serialportAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+
+59.        baudrateAdaptera.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+
+60.        choose_serialport.setAdapter(serialportAdapter);//连接控件和适配器
+
+61.        choose_baudrate.setAdapter(baudrateAdaptera);
+
+62.        choose_serialport.setSelection(2);
+
+63.        choose_baudrate.setSelection(2);
+
+64.        
+
+65.        choose_serialport.setOnItemSelectedListener(new Spinner.OnItemSelectedListener()
+
+66.        {
+
+67.            
+
+68.            public void onItemSelected(AdapterView<?> arg0, View arg1,
+
+69.                    int arg2, long arg3) {
+
+70.                // TODO Auto-generated method stub
+
+71.                choosed_serial = serial_port[arg2];
+
+72.            }
+
+73.
+
+74.            public void onNothingSelected(AdapterView<?> arg0) {
+
+75.                // TODO Auto-generated method stub
+
+76.                
+
+77.            }
+
+78.            
+
+79.        });
+
+80.            
+
+81.        choose_baudrate.setOnItemSelectedListener(new Spinner.OnItemSelectedListener()
+
+82.        {
+
+83.            
+
+84.            public void onItemSelected(AdapterView<?> arg0, View arg1,
+
+85.                    int arg2, long arg3) {
+
+86.                // TODO Auto-generated method stub
+
+87.                choosed_buad = Integer.parseInt(baud_rate[arg2]);
+
+88.            }
+
+89.
+
+90.            public void onNothingSelected(AdapterView<?> arg0) {
+
+91.                // TODO Auto-generated method stub
+
+92.                
+
+93.            }
+
+94.            
+
+95.        });
+
+96.        fd = HardwareControler.openSerialPort(choosed_serial,choosed_buad, 8, 1);//打开串口
+
+97.        if (fd != -1) {
+
+98.            Toast.makeText(getApplicationContext(), getResources().getString(R.string.open_serial_success)+choosed_serial, 1).show();
+
+99.        } else {
+
+100.            Toast.makeText(this, getResources().getString(R.string.open_fail), 1).show();
+
+101.        }
+
+102.        stopButton = (Button)findViewById(R.id.stopButton);
+
+103.        stopButton.setOnClickListener(new ClickEvent());
+
+104.        
+
+105.        sendButton = (Button)findViewById(R.id.sendButton);//发送消息
+
+106.        sendButton.setOnClickListener(new OnClickListener() {
+
+107.            
+
+108.            public void onClick(View arg0) {
+
+109.                // TODO Auto-generated method stub
+
+110.                HardwareControler.write(fd, editmsg.getText().toString().getBytes());
+
+111.                commucationView.append(editmsg.getText()+"\n");
+
+112.            }
+
+113.        });
+
+114.
+
+115.        commucationView = (TextView)findViewById(R.id.commucation_window);
+
+116.        commucationView.setMovementMethod(ScrollingMovementMethod.getInstance()); //让textview实现滚动
+
+117.        editmsg = (EditText)findViewById(R.id.editmsg);
+
+118.        
+
+119.        new readThread().start();//开始串口的监听线程
+
+120.        
+
+121.    }
+
+122.    
+
+123.    public class ClickEvent implements Button.OnClickListener//退出
+
+124.    {
+
+125.        public void onClick(View arg0) {
+
+126.            // TODO Auto-generated method stub
+
+127.            android.os.Process.killProcess(android.os.Process.myPid());
+
+128.            System.exit(0);
+
+129.        }
+
+130.    }
+
+131.    Handler handler = new Handler() {
+
+132.        public void handleMessage(Message msg) {
+
+133.            switch (msg.arg1) {
+
+134.            case 0:
+
+135.                int len = HardwareControler.read(fd, buf, 300);    
+
+136.                String string = new String(buf, 0, len);
+
+137.                commucationView.append(string+"\n");
+
+138.                new readThread().start();//处理完消息后立即开启监听线程
+
+139.                Log.d(thread,"接收到数据，新线程启动");
+
+140.                break;
+
+141.            case 1:
+
+142.                HardwareControler.setLedState(1, 0);
+
+143.                new readThread().start();
+
+144.//                Log.d(thread,"没有数据，新线程启动");
+
+145.                break;
+
+146.            default:
+
+147.                break;
+
+148.            }
+
+149.        }
+
+150.    };
+
+151.    
+
+152.    class readThread extends Thread//读取串口信息线程
+
+153.    {        
+
+154.        public void run()
+
+155.        {
+
+156.            Message msg = new Message();
+
+157.            HardwareControler.setLedState(0, 0);
+
+158.            if (HardwareControler.select(fd,5, 0)==1) {            
+
+159.                msg.arg1 = 0;            
+
+160.            }
+
+161.            else {
+
+162.                msg.arg1 =1;
+
+163.                HardwareControler.setLedState(0, 1);
+
+164.            }
+
+165.            handler.sendMessage(msg);
+
+166.        }
+
+167.    }
+
+168.}
+main.xml代码：
+1.<?xml version="1.0" encoding="utf-8"?>
+
+2.<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+3.    android:layout_width="fill_parent"
+
+4.    android:layout_height="fill_parent"
+
+5.    android:orientation="vertical" >
+
+6.
+
+7.    <TextView
+
+8.        android:id="@+id/choose_serialPort_text"
+
+9.        android:layout_width="fill_parent"
+
+10.        android:layout_height="wrap_content"
+
+11.        android:text="@+string/chooseserialPort" />
+
+12.
+
+13.    <Spinner
+
+14.        android:id="@+id/choose_seriaPort_spinner"
+
+15.        android:layout_width="wrap_content"
+
+16.        android:layout_height="40dp" >
+
+17.    </Spinner>
+
+18.
+
+19.    <TextView
+
+20.        android:id="@+id/choose_baudRate_text"
+
+21.        android:layout_width="wrap_content"
+
+22.        android:layout_height="wrap_content"
+
+23.        android:text="@+string/choosebaudRate" />
+
+24.
+
+25.    <Spinner
+
+26.        android:id="@+id/choose_baudRate_spinner"
+
+27.        android:layout_width="wrap_content"
+
+28.        android:layout_height="40dp" >
+
+29.    </Spinner>
+
+30.
+
+31.
+
+32.         <TextView
+
+33.          android:id="@+id/commucation_window"
+
+34.          android:layout_width="fill_parent"
+
+35.          android:layout_height="190dp" >
+
+36.         </TextView>
+
+37.    <EditText
+
+38.        android:id="@+id/editmsg"
+
+39.        android:layout_width="fill_parent"
+
+40.        android:layout_height="wrap_content"
+
+41.        android:hint="edit here" />
+
+42.
+
+43.    <LinearLayout
+
+44.        android:layout_width="fill_parent"
+
+45.        android:layout_height="wrap_content"
+
+46.        android:layout_weight="1"
+
+47.        android:orientation="horizontal" >
+
+48.
+
+49.        <Button
+
+50.            android:id="@+id/sendButton"
+
+51.            android:layout_width="wrap_content"
+
+52.            android:layout_height="wrap_content"
+
+53.            android:layout_weight="1"
+
+54.            android:text="@+string/send" />
+
+55.
+
+56.        <Button
+
+57.            android:id="@+id/stopButton"
+
+58.            android:layout_width="wrap_content"
+
+59.            android:layout_height="wrap_content"
+
+60.            android:layout_weight="1"
+
+61.            android:text="@string/stopButton" />
+
+62.    </LinearLayout>
+
+63.
+
+64.</LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+android读写串口(friendlyarm).import com.friendlyarm.AndroidSDK.HardwareControler;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+
+public class MapGuider_Activity extends Activity{
+
+    private int serial_fd=0;
+    private byte[] serial_RevBuf=new byte[100];
+    private byte[] serial_SendBuf="fsjajd".getBytes();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.mapguider);
+        serial_fd=HardwareControler.openSerialPort("/dev/s3c2410_serial1", 115200, 8, 1);
+        if(serial_fd!=-1)
+        {
+            System.out.println("打开串口成功");
+            HardwareControler.write(serial_fd, serial_SendBuf);
+            lac_handler.post(RevicePosDataThread);        
+            }
+        else
+        {
+            System.out.println("指定的串口不存在或在其它进程中已被打开");    
+        }
+      }
+    
+    @Override
+    protected void onDestroy() {
+        // TODO Auto-generated method stub
+        HardwareControler.close(serial_fd);
+        System.out.println("关闭串口");    
+        lac_handler.removeCallbacks(RevicePosDataThread);
+        super.onDestroy();
+    }
+
+    Handler lac_handler =new Handler(){
+
+        @Override
+        public void handleMessage(Message msg) {
+            // TODO Auto-generated method stub
+            super.handleMessage(msg);
+        }
+        
+    };
+    Runnable RevicePosDataThread =new Runnable()
+    {
+        int err=0;
+        String s;
+        public void run() {
+            // TODO Auto-generated method stub
+            while(true)
+            {
+            //Looper.prepare();
+            err=HardwareControler.select(serial_fd, 1, 0);
+            if(err==1)//有数据可读
+            {
+                HardwareControler.read(serial_fd, serial_RevBuf, 10);
+                s=new String(serial_RevBuf);
+                System.out.println("接收到串口数据"+s);
+            }
+            else if(err==0) //无数据可读
+            {
+                System.out.println("没有接收到串口数据");    
+            }
+            else  //出错
+            {
+                System.out.println("接收到串口数据出错");    
+            }
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+         }
+        }
+        
+    };
+
+}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

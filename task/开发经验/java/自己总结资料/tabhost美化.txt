@@ -1,0 +1,218 @@
+美化TabHost (2012-09-25 14:03:24)转载▼标签： androidit 分类： Android基础  
+安卓默认的TabHost样式是比较朴素的，可以对它进行样式美化。对布局进行美化的时候需要在布局文件中体现出来。TabHost标签应由一个TabWidget和一个FrameLayout组成。其中TabWidget定义了标签的属性，而frameLayout定义了标签的内容。 
+一、最普通tabHost
+我们将activity_main.xml修改为：
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@android:id/tabhost" 
+  android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <TabWidget android:id="@android:id/tabs"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content">
+</TabWidget>
+<FrameLayout android:id="@android:id/tabcontent"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
+</FrameLayout>
+</TabHost>
+注意点：1.各个标签的id基本是必须要交这个名字的；
+MainActivity.java中代码如下：
+public class MainActivity extends TabActivity {
+TabHost tabHost;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        //获取TabHost对象
+        tabHost = getTabHost();   
+//新建一个newTabSpec,设置标签和图标(setIndicator),设置内容(setContent)
+tabHost.addTab(tabHost.newTabSpec("Main_page")
+.setIndicator("",getResources()
+.getDrawable(android.R.drawable.ic_menu_call))
+.setContent(new Intent(this,Main.class)));
+tabHost.addTab(tabHost.newTabSpec("Search")
+.setIndicator("",getResources()
+.getDrawable(android.R.drawable.ic_menu_camera))
+.setContent(new Intent(this,Main.class)));
+......
+//设置当前现实哪一个标签
+tabHost.setCurrentTab(0);   //0为标签ID
+    }
+}
+注意点：1.TabHost定义需要全局，方便在其他acitivity中调用；
+2.tabHost = getTabHost()方法可以获取一个tabhost对象；
+3.tabHost.addTab添加一个标签，注意后面的一堆set和get...然后其中的Main.class是自己新建的一个acitivity，这样四个标签页可以跳转到四个acitivity（在这个demo中是跳转到同一个activity）。
+这样就可以得到第一个最普通的tabHost版本如下：
+
+其中的进度圈就是Main.class这个acitivity的内容。
+
+二、下置在底下版（如大家普遍使用的app，微信、微博等）
+将TabHost下置在屏幕下方只需要在xml布局文件中添加一句话：
+android:layout_alignParentBottom="true"
+这是TabWidget的属性。
+但是为了使这个alignParentBottom生效，必须将整个tabs封装在一个RelativeLayout中。
+所以xml文件变为：
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+  android:id="@android:id/tabhost" 
+  android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <TabWidget android:id="@android:id/tabs"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:layout_alignParentBottom="true">
+</TabWidget>
+<FrameLayout android:id="@android:id/tabcontent"
+   android:layout_width="fill_parent"
+   android:layout_height="fill_parent">
+</FrameLayout>
+</RelativeLayout>
+</TabHost>
+.java文件是不变的。
+那么置底的tabhost效果图即为：
+
+
+
+三、美化tabHost
+1.修改tabHost图标
+将图标复制到res->drawable文件夹下（任意一个即可）
+为了使按键美观一些，每个图标至少需要两种属性：选中，未选中。
+如，不太会ps的我将利用如下两个图标分别表示选中和未选中：
+
+
+
+
+将图片命名为mainpage或其他存放到drawable目录下。
+然后修改.java中的代码改变tab属性：
+tabHost.addTab(tabHost.newTabSpec("Main_page")
+.setIndicator("",
+getResources().getDrawable(R.drawable.mainpage))
+.setContent(new Intent(this,Main.class)));
+setIndicator中，第一个参数为tab显示的文字，如果需要文字辅助则在此添加字符串，否则置为空即可。第二个参数为图标，图标需要从drawable文件夹中取出，同时需要为这个图标设置内容，即点击这个图标会显示什么事件。
+
+
+这只是改变了图标本身，但是动画并未改变，保留了原来android默认的样式，这些均可以修改。只需要再定义一个state List.（每个tab按钮都需要一个state list）。
+在drawable文件夹下新建xml文件，定义selector.
+drawable/tab_mainpage.xml:
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/mainpage_light" android:state_selected="true"/>
+    <item android:drawable="@drawable/mainpage"/>
+</selector>
+那么在设置tab属性的时候，就利用这个布局文件，而不是单一的图片：
+tabHost.addTab(tabHost.newTabSpec("Main_page")
+.setIndicator("",
+getResources().getDrawable(R.drawable.tab_mainpage))
+.setContent(new Intent(this, Main.class)));
+
+
+2.修改tabHost背景
+默认的tabHost背景好朴素&……，可以将它进行修改。修改方式也许有更好的，但我选择的是在.java文件中进行修改。每个tab键是一个view类型的，可以对它直接进行backgroud的设置。
+int i;
+for (i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
+tabHost.getTabWidget().getChildAt(i).setBackgroundColor(Color.parseColor("#ECE2C2"));}
+
+
+3.进一步美化
+做到这一步基本上就出来形了，不过有细心的人会发现，这个tabHost下面总是留有一条，在被点击的时候会变黄，非常影响美观。这是由于tabHost控件本来是会出现在页面上方的，那么这一条也是按钮效果之一。把它去掉的方法不难，我采用了简单粗暴的，修改margin_bottom值的方法：
+在xml中，TabWidget下加入一个属性：android:layout_marginBottom="-3dip"
+这里用负值是没有问题的，而且-3左右刚好能把那一条去掉。整个界面就干净多了。
+
+
+四、最终效果图如下：（分别选择主页和搜索tab）
+
+
+
+附：代码汇总：activity_main.xml:
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/tabhost"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" 
+            android:layout_marginBottom="-3dip">
+        </TabWidget>
+
+
+        <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+        </FrameLayout>
+    </RelativeLayout>
+
+
+</TabHost>
+
+
+MainAcivity.java:
+package com.example.h1;
+
+
+import android.app.TabActivity;
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.widget.TabHost;
+
+
+public class MainActivity extends TabActivity {
+TabHost tabHost;
+
+
+@Override
+public void onCreate(Bundle savedInstanceState) {
+super.onCreate(savedInstanceState);
+setContentView(R.layout.activity_main);
+// 获取TabHost对象
+tabHost = getTabHost();
+// 新建一个newTabSpec,设置标签和图标(setIndicator),设置内容(setContent)
+tabHost.addTab(tabHost
+.newTabSpec("Main_page")
+.setIndicator("",
+getResources().getDrawable(R.drawable.tab_mainpage))
+.setContent(new Intent(this, Main.class)));
+tabHost.addTab(tabHost
+.newTabSpec("Search")
+.setIndicator("",
+getResources().getDrawable(R.drawable.tab_search))
+.setContent(new Intent(this, Main.class)));
+tabHost.addTab(tabHost
+.newTabSpec("Shelf")
+.setIndicator("",
+getResources().getDrawable(R.drawable.tab_shelf))
+.setContent(new Intent(this, Main.class)));
+tabHost.addTab(tabHost
+.newTabSpec("Setting")
+.setIndicator("",
+getResources().getDrawable(R.drawable.tab_setting))
+.setContent(new Intent(this, Main.class)));
+
+
+int i;
+for (i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
+tabHost.getTabWidget().getChildAt(i)
+.setBackgroundColor(Color.parseColor("#ECE2C2"));
+}
+// 设置当前现实哪一个标签
+tabHost.setCurrentTab(0); // 0为标签ID
+}
+}

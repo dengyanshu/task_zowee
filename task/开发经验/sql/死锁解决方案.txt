@@ -1,0 +1,28 @@
+--- 1: 找出死锁的SPID / DBID
+select * from sys.sysprocesses where blocked <> 0
+
+SELECT spid, blocked, loginame, last_batch, status, cmd, hostname, program_name, * 
+from sys.sysprocesses 
+where spid in
+( select blocked from sys.sysprocesses where blocked <> 0 ) or (blocked <>0)
+     
+---2找出受影响的数据库
+SELECT name,dbid from master.sys.sysdatabases WHERE dbid = 6
+
+--- 3 找出语句，以便定位问题
+dbcc inputbuffer(54)
+    
+----4 杀进程
+kill  54
+
+
+BTW: 今天死锁的两条语句：
+/*
+ 1：update IWIPLOTSTS  set GETFLAG = '2'  where IF_SEQ =@P0  
+2：select   ACTIONFLAG as IOIACTIONFLAG_,'ZHUOYI' AS FACTORY,IF_SEQ,' ' as MOVE_FLAG,' ' as MOVE_TIME, LOT_ID, EMS_ORDER_ID, OPER, LINE_ID, RES_ID, MOTHER_LOT_ID, PASS_FAIL_FLAG, DEFECT_CODE, TRAN_TIME, TRAN_COMMENT, TRAN_USER_ID  
+from IWIPLOTSTS  where GETFLAG='0'  order by IF_SEQ asc  
+
+*/  
+
+
+
